@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--#include virtual="/status_update_tasks_v2/includes/head_common_bs.html"-->
+    <title>Status Update Tools</title>
+  </head>
+  
+  <body>
+    <div id="wrap">
+      
+      <!-- Common page navigation -->
+      <!--#include virtual="/status_update_tasks_v2/includes/page_header_bs.html"-->
+      
+      
+      <div class="container">        <!-- Begin main page content container -->
+	<div class="page-header"> 
+	  <h3>Status Update Tools <small id="subheader" class="pull-right"> </small></h3>
+	</div>
+
+	<!--  Tasks section -->
+	<div id="task-alt-dialog"></div>
+
+	<div id="task-dialog">
+
+
+          <!-- Merge replacement coordinates -->
+          <form id="merge-xyz-task-form"  enctype="multipart/formdata" class="form-inline" role="form"> 
+            <fieldset>
+	      <legend>Merge Replacement Coordinates <a href="status_help.html"> <span class="glyphicon glyphicon-info-sign pull-right"></span> </a> </legend>
+
+	      <div class="form-group">	      
+		<label class="control-label" for="merge-xyz-task-form-inp-1">Replacement coordinate file name</label>
+		<input id="merge-xyz-task-form-inp-1" class="form-control" type="file" name="xyzfilename"  value="" size="60" /> 
+	      </div>
+
+	      <div class="form-group">	      
+		<label class="control-label" for="merge-xyz-task-form-inp-2">File format</label> 
+		<select id="merge-xyz-task-form-inp-2" class="form-control" name="xyzfileformat" columns="3">
+                  <option selected="selected"    value="cif">PDBx/mmCIF</option>
+                  <option                        value="pdb">PDB</option>
+		</select>
+	      </div>
+
+              <input class="btn btn-primary my-task-form-submit"  type="submit" value="Run"/> 
+              <div class="op-status"></div>
+              <div class="op-links"></div>
+
+            </fieldset>
+          </form>
+
+
+	</div> <!-- end of task dialog -->
+
+	<!-- progress spinner -->
+	<div id="loading">
+	  <div id="loadingcontent">
+	    <p id="loadingspinner">
+	      Running calculation ...
+	    </p>
+	  </div>
+	</div>
+
+
+      </div> <!-- End main page content container -->
+      
+    </div> <!-- end wrap -->
+    
+    <!--#include virtual="/status_update_tasks_v2/includes/page_javascript_bs.html"-->
+    <!--#include virtual="/status_update_tasks_v2/includes/page_footer_bs.html"-->
+  </body>
+</html>
+

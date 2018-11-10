@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--#include virtual="/status_update_tasks_v2/includes/head_common_bs.html"-->
+    <title>Status Update Tools </title>
+
+  </head>
+  <body>
+    <div id="wrap">
+      <!--#include virtual="/status_update_tasks_v2/includes/page_header_bs.html"-->
+
+      <div class="container">
+	<div class="page-header">
+	  <h3>Status Update Tools <small id="subheader" class="pull-right"> </small></h3>
+	</div>
+	<p>
+	  Use the forms below to update status items and produce data files for exchange with depositors.
+	</p>
+
+	<div id="status-identifier-dialog" class="displaynone">
+
+	  <form id="status-set-idcode-form" method="get" enctype="application/x-www-form-urlencoded" name="status-set-idcode-form" class="form-horizontal" >
+
+	    <fieldset>
+	      <legend>Deposition data set code <a href="status_help.html">  <span class="glyphicon glyphicon-info-sign pull-right"></span> </a> </legend>
+
+	      <input type="text" name="idcode" id="idcode" value="" placeholder="Deposition data set ID" class="input-large"> &nbsp;&nbsp;&nbsp;
+	      <input id="status-set-idcode-button" class="btn btn-primary pull-right" TYPE="submit" VALUE="Go">
+
+	      <div id="status-set-idcode-status" class="op-status"></div>
+	      <div id="status-set-idcode-links"  class="op-links"></div>
+	    </fieldset>
+	  </form>
+
+	</div> <!-- end status identifier dialog -->
+
+
+
+	<div id="status-update-dialog">
+
+	  <form id="status-code-form" method="post"   enctype="application/x-www-form-urlencoded" name="status-code-form" class="form-inline" >
+	    <input name="contentType" TYPE="hidden" VALUE="model">
+
+	    <fieldset>
+	      <legend>Update status <a href="status_help.html">  <span class="glyphicon glyphicon-info-sign pull-right"></span> </a> </legend>
+
+	      <div class="row">
+		<div class="col-sm-4">
+		  <label for="status-code" class="control-label">Processing Status Code</label>
+		  <select id="status-code" name="status-code" class="form-control input-large">
+<!--		    <option selected="selected"  value="HPUB">HPUB</option> -->
+		    <option                      value="HPUB">HPUB</option>
+		    <option                      value="AUTH">AUTH</option>
+		    <option                      value="HOLD">HOLD</option>
+		    <option                      value="WAIT">WAIT</option>
+		    <option                      value="PROC">PROC</option>
+		    <option                      value="REFI">REFI</option>
+		    <option                      value="AUCO">AUCO</option>
+		    <option                      value="REPL">REPL</option>
+		    <option                      value="POLC">POLC</option>
+		    <option                      value="WDRN">WDRN</option>
+		  </select>
+		</div>
+
+		<div class="col-sm-6">
+		  <label for="approval-type" class="control-label">Approval type</label>
+		  <select id="approval-type" name="approval-type" class="form-control  input-large">
+		    <option                      value="unassigned">unassigned</option>
+		    <option                      value="explicit">explict</option>
+		    <option                      value="implicit">implicit</option>
+		  </select>
+		</div>
+	      </div>
+
+	      <br/>
+
+	      <div class="row">
+		    <div class="col-sm-4">
+		      <label class="control-label" for="auth-status-code">Author Release Status Code</label>
+		      <select id="auth-status-code" name="auth-status-code" class="form-control input-large">
+		        <!-- <option selected="selected"  value="HPUB">HPUB</option> -->
+                <option                      value="HPUB">HPUB</option>
+		        <option                      value="HOLD">HOLD</option>
+		        <option                      value="REL">REL</option>
+		      </select>
+		    </div>
+
+		    <div class="col-sm-6">
+		      <div class="row">
+		        <div class="col-sm-3">
+		          <label for="auth-status-hold-date" class="control-label">Author hold date</label>
+		        </div>
+		        <div class="col-sm-5 input-group date form_date" data-date="" data-date-format="yyyy-mm-dd">
+		          <input id="auth-status-hold-date" name="auth-status-hold-date" class="form-control" size="12" type="text" value="" readonly>
+		          <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+		          <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+		        </div>
+		      </div>
+		    </div>
+	      </div>
+
+	      <br/>
+	      <div class="row">
+		    <div class="col-sm-4">
+		      <label for="annotator-initials" class="control-label"> Reassign annotator (opt)</label>
+		      <input type="text" name="annotator-initials" id="annotator-initials" value="" placeholder="initials" class="form-control input-large">
+		    </div>
+
+            <div class="col-sm-offset-2 col-sm-4">
+              <label class="control-label" for="process-site">Process site</label>
+              <select id="process-site" name="process-site" class="form-control input-large">
+                <option                      value="RCSB">RCSB</option>
+                <option                      value="PDBE">PDBE</option>
+                <option                      value="PDBJ">PDBJ</option>
+              </select>
+            </div>
+
+		    <div class="col-sm-offset-1 col-sm-1">
+		      <input id="status-code-button" class="btn btn-primary pull-right" TYPE="submit" VALUE="Go">
+		    </div>
+	      </div>
+
+	      <div id="status-code-status" class="op-status"></div>
+	      <div id="status-code-links" class="op-links"></div>
+	    </fieldset>
+
+
+	  </form>
+
+
+	</div> <!-- end status admin dialog -->
+
+
+    <div id="status-reload-files-dialog">     <!-- Create file operations -->
+      <form id="status-reload-files-form" name="status-reload-files-form" method="post"  enctype="multipart/form-data" class="form-inline">
+        <fieldset>
+
+          <legend>Reload data file <a href="status_help.html"> <span class="glyphicon glyphicon-info-sign pull-right"></span> </a> </legend>
+
+          <input id="status-reload-files-button" class="btn btn-primary" TYPE="submit" VALUE="Reload">
+          <div id="status-reload-files-status"   class="op-status"></div>
+        </fieldset>
+      </form>
+    </div> <!-- end status file create dialog -->
+
+
+    <div id="process-site-update-dialog">     <!-- process site update operations -->
+      <form id="process-site-update-form" name="process-site-update-form" method="post"  enctype="multipart/form-data" class="form-inline">
+        <fieldset>
+
+          <legend>Update process site and reload <a href="status_help.html"> <span class="glyphicon glyphicon-info-sign pull-right"></span> </a> </legend>
+
+          <input id="process-site-update-button" class="btn btn-primary" TYPE="submit" VALUE="Update site and reload">
+          <div id="process-site-update-status"   class="op-status"></div>
+        </fieldset>
+      </form>
+    </div> <!-- end process site update dialog -->
+
+
+	<div id="status-create-files-dialog">  	  <!-- Create file operations -->
+	  <form id="status-create-files-form" name="status-create-files-form" method="post"  enctype="multipart/form-data" class="form-inline">
+	    <fieldset>
+
+	      <legend>Create data files <a href="status_help.html"> <span class="glyphicon glyphicon-info-sign pull-right"></span> </a> </legend>
+
+	      <label for="operation" class="control-label">Content type</label>
+	      <select  name="operation" class="form-control input-large">
+		<option selected="selected"    value="pdb">PDB</option>
+		<option                        value="pdbx">PDBx/mmCIF (public subset)</option>
+		<option                        value="assembly">PDBx assembly files</option>
+	      </select>
+
+	      <input id="status-create-files-button" class="btn btn-primary" TYPE="submit" VALUE="Go">
+	      <div id="status-create-files-status"   class="op-status"></div>
+	      <div id="status-create-files-links"    class="op-links"></div>
+	    </fieldset>
+	  </form>
+	</div> <!-- end status file create dialog -->
+
+	<div id="status-misc-report-dialog">
+	  <!-- Report operations -->
+	  <form id="status-misc-report-form" method="post"   enctype="application/x-www-form-urlencoded" name="status-misc-report-form" class="form-inline" >
+	    <input name="contentType" TYPE="hidden" VALUE="model">
+	    <fieldset>
+	      <legend>View reports <a href="status_help.html"> <span class="glyphicon glyphicon-info-sign pull-right"></span> </a> </legend>
+
+	      <label for="operation1" class="control-label">Report type</label>
+	      <select id="operation1" name="operation" class="form-control input-large">
+		<option selected="selected"    value="report">Create entry report</option>
+		<option                        value="check">Entry dictionary check report</option>
+		<option                        value="checkv4">Entry dictionary check (V4) report</option>
+		<!--
+		    <option                      value="fetch_entry">Fetch entry file</option>
+		<option                      value="fetch_sf">Fetch structure factor file</option>
+		-->
+	      </select>
+
+	      <input id="status-misc-report-button" class="btn btn-primary" TYPE="submit" VALUE="Go">
+	      <div id="status-misc-report-status"   class="op-status"></div>
+	      <div id="status-misc-report-links"    class="op-links"></div>
+	    </fieldset>
+	  </form>
+	</div>  <!-- end status report dialog -->
+
+
+	<div id="status-report-container">
+	  <div id="status-misc-report"  class="report-content"></div>
+	</div>
+
+
+	<!-- END TEXT HERE  -->
+	<!-- progress spinner -->
+	<div id="loading">
+	  <div id="loadingcontent">
+	    <p id="loadingspinner">
+	      Running  ...
+	    </p>
+	  </div>
+	</div>
+
+      </div> <!-- end container -->
+    </div> <!-- end wrap -->
+    <!--#include virtual="/status_update_tasks_v2/includes/page_footer_bs.html"-->
+    <!--#insert application_context="/status_update_tasks_v2/includes/app_context.html"-->
+    <!--#include virtual="/status_update_tasks_v2/includes/page_javascript_bs.html"-->
+
+  </body>
+</html>
+
+
