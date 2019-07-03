@@ -273,8 +273,17 @@ function updateStatusForm() {
     logContext("+updateStatusForm - statusCode " + statusCode);
     if (statusCode.length > 0) {
         $('#status-code').val(statusCode);
+        $('#status-code2').val(statusCode);
         //$("#status-code option[value=" + statusCode + "]").attr("selected", "selected");
+	if (statusCode == 'REL' || statusCode == 'OBJ') {
+            $("#status-code-pulldown").hide();
+            $("#status-code-text").show();
+	} else {
+            $("#status-code-pulldown").show();
+            $("#status-code-text").hide();
+	}
     }
+
     if (authRelCode.length > 0) {
         $('#auth-status-code').val(authRelCode);
         //$("#auth-status-code option[value=" + authRelCode + "]").attr("selected", "selected");
