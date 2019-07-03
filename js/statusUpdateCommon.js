@@ -32,6 +32,7 @@ var structTitle = '';
 var experimentalMethods = '';
 var annotatorId = '';
 var statusCode = '';
+var postRelStatusCode = '';
 var authRelCode = '';
 var initialDepositDate = '';
 var holdCoordinatesDate = '';
@@ -164,7 +165,7 @@ function getEntryInfo() {
     }).done(function(jsonObj) {
         assignContext(jsonObj);
         renderContext();
-        logContext("After done in getEntryInfo  - statusCode " + statusCode);
+        logContext("After done in getEntryInfo  - statusCode " + statusCode + " -postRelStatusCode " + postRelStatusCode);
         appendContextToMenuUrls();
         updateStatusForm();
         if (em_current_status.length > 0) {
@@ -181,8 +182,13 @@ function getEntryInfo() {
 function getSubHeader() {
     //    var myText = entryId + '<br /><h5>';
     var myText = '<span class="pull-right">' + entryId + '</span> <br /><h5>';
+    logContext('getSubHeader ' + statusCode + ' : ' + postRelStatusCode);
     if (statusCode.length > 0) {
-        myText += '&nbsp;&nbsp;&nbsp;&nbsp;Status: ' + statusCode
+	if (postRelStatusCode.length == 0) {
+            myText += '&nbsp;&nbsp;&nbsp;&nbsp;Status: ' + statusCode;
+	} else {
+	    myText += '&nbsp;&nbsp;&nbsp;&nbsp;Status: ' + postRelStatusCode + '(' + statusCode + ')';
+	}
     }
 
     if (authRelCode.length > 0) {
@@ -377,6 +383,7 @@ function getCurrentContext() {
         entryId = startupEntryId;
         annotatorId = startupAnnotatorId;
         statusCode = startupStatusCode;
+        postRelStatusCode = startupPostRelStatusCode;
         authRelCode = startupAuthRelCode;
         //
         initialDepositDate = startupInitialDepositDate;
@@ -463,6 +470,10 @@ function appendContextToMenuUrls() {
 
         if (statusCode.length > 0) {
             ret += (/\?/.test(ret) ? '&' : '?') + 'statuscode=' + statusCode;
+        }
+
+        if (postRelStatusCode.length > 0) {
+            ret += (/\?/.test(ret) ? '&' : '?') + 'postrelstatuscode=' + postRelStatusCode;
         }
 
         if (authRelCode.length > 0) {
@@ -552,6 +563,11 @@ function assignContext(jsonObj) {
     if ('statuscode' in jsonObj) {
         statusCode = jsonObj.statuscode;
     }
+
+    if ('postrelstatuscode' in jsonObj) {
+        postRelStatusCode = jsonObj.postrelstatuscode;
+    }
+
     if ("authrelcode" in jsonObj) {
         authRelCode = jsonObj.authrelcode;
     }
@@ -629,6 +645,7 @@ function clearServiceContext() {
     annotatorId = '';
     //
     statusCode = '';
+    postRelStatusCode = '';
     authRelCode = '';
     initialDepositDate = '';
     holdCoordinatesDate = '';
