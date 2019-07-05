@@ -270,7 +270,7 @@ function renderContext() {
 }
 
 function updateStatusForm() {
-    logContext("+updateStatusForm - statusCode " + statusCode);
+    logContext("+updateStatusForm - statusCode " + statusCode + " - postRelStatus " + postRelStatusCode);
     if (statusCode.length > 0) {
         $('#status-code').val(statusCode);
         $('#status-code2').val(statusCode);
@@ -282,6 +282,14 @@ function updateStatusForm() {
             $("#status-code-pulldown").show();
             $("#status-code-text").hide();
 	}
+    }
+
+    if (postRelStatusCode.length > 0) {
+        $("#postrel-pulldown").show();
+        $('#postrel-status-code').val(postRelStatusCode);
+    } else {
+        $("#postrel-pulldown").hide();
+        $('#postrel-status-code').val('');
     }
 
     if (authRelCode.length > 0) {

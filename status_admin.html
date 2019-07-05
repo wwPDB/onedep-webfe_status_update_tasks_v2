@@ -62,10 +62,26 @@
 		      <option                      value="WDRN">WDRN</option>
 		    </select>
 		  </div>
+
 		  <div id="status-code-text" style="display:none">
 		    <label for "status-code-main" class="control-label">Processing Status Code</label>
                     <input id="status-code2" name="status-code-main" class="form-control" size="12" type="text" value="" readonly>
 		  </div>
+
+		  <div id="postrel-pulldown" style="display:none">
+		    <br>
+		    <label for="postrel-status-code" class="control-label">PostRel Status Code</label>
+		    <select id="postrel-status-code" name="postrel-status-code" class="form-control input-large">
+		      <!--		    <option selected="selected"  value="HPUB">HPUB</option> -->
+		      <option                      value="AUTH">AUTH</option>
+		      <option                      value="WAIT">WAIT</option>
+		      <option                      value="PROC">PROC</option>
+		      <option                      value="AUCO">AUCO</option>
+		      <option                      value="REPL">REPL</option>
+		    </select>
+		  </div>
+
+
 		</div>
 
 		<div class="col-sm-6">
@@ -107,23 +123,23 @@
 
 	      <br/>
 	      <div class="row">
-		    <div class="col-sm-4">
-		      <label for="annotator-initials" class="control-label"> Reassign annotator (opt)</label>
-		      <input type="text" name="annotator-initials" id="annotator-initials" value="" placeholder="initials" class="form-control input-large">
-		    </div>
+		<div class="col-sm-4">
+		  <label for="annotator-initials" class="control-label"> Reassign annotator (opt)</label>
+		  <input type="text" name="annotator-initials" id="annotator-initials" value="" placeholder="initials" class="form-control input-large">
+		</div>
 
-            <div class="col-sm-offset-2 col-sm-4">
-              <label class="control-label" for="process-site">Process site</label>
-              <select id="process-site" name="process-site" class="form-control input-large">
-                <option                      value="RCSB">RCSB</option>
-                <option                      value="PDBE">PDBE</option>
-                <option                      value="PDBJ">PDBJ</option>
-              </select>
-            </div>
+		<div class="col-sm-offset-2 col-sm-4">
+		  <label class="control-label" for="process-site">Process site</label>
+		  <select id="process-site" name="process-site" class="form-control input-large">
+                    <option                      value="RCSB">RCSB</option>
+                    <option                      value="PDBE">PDBE</option>
+                    <option                      value="PDBJ">PDBJ</option>
+		  </select>
+		</div>
 
-		    <div class="col-sm-offset-1 col-sm-1">
-		      <input id="status-code-button" class="btn btn-primary pull-right" TYPE="submit" VALUE="Go">
-		    </div>
+		<div class="col-sm-offset-1 col-sm-1">
+		  <input id="status-code-button" class="btn btn-primary pull-right" TYPE="submit" VALUE="Go">
+		</div>
 	      </div>
 
 	      <div id="status-code-status" class="op-status"></div>
