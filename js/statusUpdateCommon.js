@@ -438,6 +438,10 @@ function getCurrentContext() {
             standaloneMode = true;
         }
 
+        if ("postrelstatuscode" in params) {
+            postRelStatusCode = params.postrelstatuscode;
+	}
+
         if ("authrelcode" in params) {
             authRelCode = params.authrelcode;
         }
