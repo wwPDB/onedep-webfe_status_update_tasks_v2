@@ -275,12 +275,14 @@ function updateStatusForm() {
         $('#status-code').val(statusCode);
         $('#status-code2').val(statusCode);
         //$("#status-code option[value=" + statusCode + "]").attr("selected", "selected");
-	if (statusCode == 'REL' || statusCode == 'OBJ') {
+	if (statusCode == 'REL' || statusCode == 'OBS') {
             $("#status-code-pulldown").hide();
             $("#status-code-text").show();
+            $(".hiderel").hide();
 	} else {
             $("#status-code-pulldown").show();
             $("#status-code-text").hide();
+            $(".hiderel").show();
 	}
     }
 

@@ -68,35 +68,35 @@
                     <input id="status-code2" name="status-code-text" class="form-control" size="12" type="text" value="" readonly>
 		  </div>
 
+		</div>
+
+		<div class="col-sm-6">
+		  <div class="hiderel">
+		    <label for="approval-type" class="control-label">Approval type</label>
+		    <select id="approval-type" name="approval-type" class="form-control  input-large">
+		      <option                      value="unassigned">unassigned</option>
+		      <option                      value="explicit">explict</option>
+		      <option                      value="implicit">implicit</option>
+		    </select>
+		  </div>
+
 		  <div id="postrel-pulldown" style="display:none">
-		    <br>
 		    <label for="postrel-status-code" class="control-label">PostRel Status Code</label>
 		    <select id="postrel-status-code" name="postrel-status-code" class="form-control input-large">
 		      <!--		    <option selected="selected"  value="HPUB">HPUB</option> -->
 		      <option                      value="AUTH">AUTH</option>
 		      <option                      value="WAIT">WAIT</option>
-		      <option                      value="PROC">PROC</option>
 		      <option                      value="AUCO">AUCO</option>
 		      <option                      value="REPL">REPL</option>
 		    </select>
 		  </div>
-
-
 		</div>
 
-		<div class="col-sm-6">
-		  <label for="approval-type" class="control-label">Approval type</label>
-		  <select id="approval-type" name="approval-type" class="form-control  input-large">
-		    <option                      value="unassigned">unassigned</option>
-		    <option                      value="explicit">explict</option>
-		    <option                      value="implicit">implicit</option>
-		  </select>
-		</div>
 	      </div>
 
 	      <br/>
 
-	      <div class="row">
+	      <div class="row hiderel">
 		    <div class="col-sm-4">
 		      <label class="control-label" for="auth-status-code">Author Release Status Code</label>
 		      <select id="auth-status-code" name="auth-status-code" class="form-control input-large">
