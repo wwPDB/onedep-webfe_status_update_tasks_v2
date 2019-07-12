@@ -31,6 +31,7 @@ var combId = '';
 var structTitle = '';
 var experimentalMethods = '';
 var annotatorId = '';
+var wfAnnotatorId = '';
 var statusCode = '';
 var postRelStatusCode = '';
 var authRelCode = '';
@@ -414,6 +415,8 @@ function getCurrentContext() {
 	reqacctypes = startupAccTypes
 	//
         standaloneMode = false;
+	//
+	wfAnnotatorId = startupWFAnnotator;
     } else {
         var myUrl = $(location).attr('href');
         pagePath = $.url(myUrl).attr('relative');
@@ -468,7 +471,11 @@ function getCurrentContext() {
             reqacctypes = params.reqacctypes;
         }
 
-        logContext("After getCurrentContext() sessionId " + sessionId + " entryId " +  entryId + " annotatorId " + annotatorId );
+        if ("wfannotatorid" in params) {
+            wfAnnotatorId=params.wfannotatorid;
+        }
+
+        logContext("After getCurrentContext() sessionId " + sessionId + " entryId " +  entryId + " annotatorId " + annotatorId + " wfannotatorid " + wfAnnotatorId);
         logContext("After getCurrentContext() experimentalMethods " +  experimentalMethods);
     }
 }
@@ -523,6 +530,9 @@ function appendContextToMenuUrls() {
             ret += (/\?/.test(ret) ? '&' : '?') + 'reqacctypes=' + reqacctypes;
         }
 
+        if (wfAnnotatorId.length > 0) {
+            ret += (/\?/.test(ret) ? '&' : '?') + 'wfannotatorid=' + wfAnnotatorId;
+        }
         return ret;
     });
 
@@ -1156,11 +1166,17 @@ $(document).ready(function() {
     }
 
 
-    //communication  operations
+    //communication  operations - non-instant selection
     if ($("#status-communication-dialog").length > 0) {
         $('#status-communication-button').click(function() {
             var serviceData = getServiceContext();
-            url = "/service/messaging/new_session/wf?filesource=archive&embed=true&identifier=" + entryId +  '&annotator=' + annotatorId +
+
+	    // If wfAnnotatorId is set - use it - otherwise annotator of entry
+	    var ann = annotatorId;
+            if (wfAnnotatorId.length > 0) {
+		ann = wfAnnotatorId;
+	    };
+            url = "/service/messaging/new_session/wf?filesource=archive&embed=true&identifier=" + entryId +  '&annotator=' + ann +
                  '&expmethod=' + experimentalMethods;
             $("#page-top").html('');
             $("#page-top").hide();
@@ -1170,10 +1186,16 @@ $(document).ready(function() {
 
     }
 
-    // communication  operations
+    // communication  operations - instant open message
     if ($("#status-communication-instant-dialog").length > 0) {
         var serviceData = getServiceContext();
-        url = "/service/messaging/new_session/wf?filesource=archive&embed=true&identifier=" + entryId + '&annotator=' + annotatorId +
+
+	// If wfAnnotatorId is set - use it - otherwise annotator of entry
+	var ann = annotatorId;
+        if (wfAnnotatorId.length > 0) {
+	    ann = wfAnnotatorId;
+	};
+        url = "/service/messaging/new_session/wf?filesource=archive&embed=true&identifier=" + entryId + '&annotator=' + ann +
                      '&expmethod=' + experimentalMethods;
         logContext('communication instant url = ' + url);
         $("#page-top").html('');
