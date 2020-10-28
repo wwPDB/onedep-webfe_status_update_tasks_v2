@@ -152,6 +152,8 @@ function getEntryInfoOrg() {
 
 
 function getEntryInfo() {
+    // Display spinner
+    progressStart();
     var entryInfoUrl = '/service/status_update_tasks_v2/entryinfo';
     var serviceData = getServiceContext();
     $.ajax({
@@ -175,6 +177,8 @@ function getEntryInfo() {
                  $("#subheader").html(getSubHeaderEm());
              }
         }
+	// Take down spinner
+	progressEnd();
     });
     //
     //logContext("After getEntryInfo ");
