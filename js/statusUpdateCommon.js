@@ -192,30 +192,45 @@ function getEntryInfo() {
 
 function getSubHeader() {
     //    var myText = entryId + '<br /><h5>';
+
+    var showpdb;
     var myText = '<span class="pull-right">' + entryId + '</span> <br /><h5>';
     logContext('getSubHeader ' + statusCode + ' : ' + postRelStatusCode);
+
+    var ispdb = false;
     if (statusCode.length > 0) {
-	if (postRelStatusCode.length == 0) {
-            myText += '&nbsp;&nbsp;&nbsp;&nbsp;Status: ' + statusCode;
-	} else {
-	    myText += '&nbsp;&nbsp;&nbsp;&nbsp;Status: ' + postRelStatusCode + '(' + statusCode + ')';
+	// Maponly sets a status code as well
+	ispdb = ispdbentry();
+	if (ispdb === true) {
+	    if (postRelStatusCode.length == 0) {
+		myText += '&nbsp;&nbsp;&nbsp;&nbsp;Status: ' + statusCode;
+	    } else {
+		myText += '&nbsp;&nbsp;&nbsp;&nbsp;Status: ' + postRelStatusCode + '(' + statusCode + ')';
+	    }
 	}
     }
 
-    if (authRelCode.length > 0) {
+    if (authRelCode.length > 0  && ispdb === true) {
         myText += '&nbsp;&nbsp; Author status: ' + authRelCode
     }
 
-    if (initialDepositDate.length > 0) {
+    if (ispdb == true && initialDepositDate.length > 0) {
         myText += '&nbsp;&nbsp; Deposited: ' + initialDepositDate
     }
 
 
     if (em_current_status.length > 0) {
-        myText += '<br />&nbsp;&nbsp;&nbsp;&nbsp;EMDB Status: ' + em_current_status;
+	if (ispdb === true) {
+	    myText += '<br />';
+	}
+        myText += '&nbsp;&nbsp;&nbsp;&nbsp;EMDB Status: ' + em_current_status;
 
 	if (em_depui_depositor_hold_instructions.length > 0) {
 	    myText += '&nbsp;&nbsp;Author status: ' + em_depui_depositor_hold_instructions;
+	}
+
+	if (ispdb == false && initialDepositDate.length > 0) {
+            myText += '&nbsp;&nbsp; Deposited: ' + initialDepositDate
 	}
     }
 
@@ -248,17 +263,17 @@ function getSubHeaderEm() {
     }
 
     /*
-    if (initialDepositDate.length > 0) {
-        myText += '&nbsp;&nbsp; Deposited: ' + initialDepositDate
-    }
+      if (initialDepositDate.length > 0) {
+      myText += '&nbsp;&nbsp; Deposited: ' + initialDepositDate
+      }
 
-    if (annotatorId.length > 0) {
-        myText += '<br />&nbsp;&nbsp; Annotator: ' + annotatorId
-    }
+      if (annotatorId.length > 0) {
+      myText += '<br />&nbsp;&nbsp; Annotator: ' + annotatorId
+      }
 
-    if (approvalType.length > 0) {
-        myText += '&nbsp;&nbsp; Approval type: ' + approvalType
-    }
+      if (approvalType.length > 0) {
+      myText += '&nbsp;&nbsp; Approval type: ' + approvalType
+      }
     */
     myText += '</h5>'
     logContext("After getSubHeaderEm() myText " + myText);
@@ -267,8 +282,8 @@ function getSubHeaderEm() {
 
 function renderContext() {
     /*
-         Load some cosmetic details in the top of page  --
-     */
+      Load some cosmetic details in the top of page  --
+    */
     if (structTitle.length > 0 || em_title.length > 0) {
         $('#my_title').remove();
 	if (structTitle.length > 0) {
@@ -293,6 +308,20 @@ function renderContext() {
 
     //$("#subheader").html(getSubHeader());
 }
+
+function ispdbentry() {
+    // Function to return if this is a PDB entry.
+    // Checks requested accession codes. If not set (legacy) than 
+    // is.  Returns booksan
+    var showpdb = false;
+    if (reqacctypes.length < 2) {
+	// No accession codes, assume legacy
+	showpdb = true;
+    } else if (reqacctypes.indexOf('PDB') >= 0) {
+	showpdb = true;
+    }
+    return showpdb;
+};
 
 function updateStatusForm() {
     logContext("+updateStatusForm - statusCode " + statusCode + " - postRelStatus " + postRelStatusCode);
@@ -320,13 +349,7 @@ function updateStatusForm() {
     }
 
     // Regretfully, EM map only has a current_status.  Need to be more clever
-    var showpdb = false;
-    if (reqacctypes.length < 2) {
-	// No accession codes, assume legacy
-	showpdb = true;
-    } else if (reqacctypes.indexOf('PDB') >= 0) {
-	showpdb = true;
-    }
+    var showpdb = ispdbentry();
     if (showpdb === true) {
         $(".showpdb").show();
         $(".hidepdb").hide();
@@ -1143,7 +1166,6 @@ $(document).ready(function() {
     }
 
    if ($("#status-reload-files-dialog").length > 0) {
-       alert("RELOAD");
         $('#status-reload-files-form').ajaxForm({
             url: statusReloadUrl,
             dataType: 'json',
