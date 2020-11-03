@@ -51,6 +51,7 @@ var em_last_update = '';
 var em_map_hold_date = '';
 var em_map_release_date = '';
 var em_header_release_date = '';
+var em_depui_depositor_hold_instructions = '';
 var em_replace_existing_entry_flag = '';
 var em_title = '';
 //
@@ -166,17 +167,22 @@ function getEntryInfo() {
             // Reset any existing state --
         }
     }).done(function(jsonObj) {
+	logContext("Entryinfo context" + JSON.stringify(jsonObj))
         assignContext(jsonObj);
         renderContext();
         logContext("After done in getEntryInfo  - statusCode " + statusCode + " -postRelStatusCode " + postRelStatusCode);
+	// Asynchronous call - need to update here 
+	if ($("#status-identifier-dialog").length > 0) {
+            $("#subheader").html(getSubHeader());
+	}
         appendContextToMenuUrls();
         updateStatusForm();
-        if (em_current_status.length > 0) {
-            updateStatusFormEm();
-             if ($("#status-update-em-dialog").length > 0) {
-                 $("#subheader").html(getSubHeaderEm());
-             }
-        }
+        // if (em_current_status.length > 0) {
+        //    updateStatusFormEm();
+        //     if ($("#status-update-em-dialog").length > 0) {
+        //         $("#subheader").html(getSubHeaderEm());
+        //     }
+        // }
 	// Take down spinner
 	progressEnd();
     });
@@ -202,6 +208,15 @@ function getSubHeader() {
 
     if (initialDepositDate.length > 0) {
         myText += '&nbsp;&nbsp; Deposited: ' + initialDepositDate
+    }
+
+
+    if (em_current_status.length > 0) {
+        myText += '<br />&nbsp;&nbsp;&nbsp;&nbsp;EMDB Status: ' + em_current_status;
+
+	if (em_depui_depositor_hold_instructions.length > 0) {
+	    myText += '&nbsp;&nbsp;Author status: ' + em_depui_depositor_hold_instructions;
+	}
     }
 
     if (annotatorId.length > 0) {
@@ -254,9 +269,14 @@ function renderContext() {
     /*
          Load some cosmetic details in the top of page  --
      */
-    if (structTitle.length > 0) {
+    if (structTitle.length > 0 || em_title.length > 0) {
         $('#my_title').remove();
-        $('.page-header').append('<h5 id="my_title"> Title: ' + structTitle + '</h5>');
+	if (structTitle.length > 0) {
+            $('.page-header').append('<h5 id="my_title"> Title: ' + structTitle + '</h5>');
+	}
+	if (em_title.length > 0) {
+            $('.page-header').append('<h5 id="my_title"> EMDB Title: ' + em_title + '</h5>');
+	}
     } else {
         $('#my_title').hide();
     }
@@ -290,6 +310,30 @@ function updateStatusForm() {
             $(".hiderel").show();
 	}
     }
+    
+    if (em_current_status.length > 0) {
+        $(".showem").show();
+        $(".hideem").hide();
+    } else {
+        $(".showem").hide();
+        $(".hideem").show();
+    }
+
+    // Regretfully, EM map only has a current_status.  Need to be more clever
+    var showpdb = false;
+    if (reqacctypes.length < 2) {
+	// No accession codes, assume legacy
+	showpdb = true;
+    } else if (reqacctypes.indexOf('PDB') >= 0) {
+	showpdb = true;
+    }
+    if (showpdb === true) {
+        $(".showpdb").show();
+        $(".hidepdb").hide();
+    } else {
+	$(".showpdb").hide();
+        $(".hidepdb").show();
+    }
 
     if (postRelStatusCode.length > 0) {
         $("#postrel-pulldown").show();
@@ -319,6 +363,22 @@ function updateStatusForm() {
         //$("#process-site option[value=" + processSite + "]").attr("selected", "selected");
 	$("#process-site").val(processSite);
     }
+
+    // Single form
+    if (em_depui_depositor_hold_instructions.length > 0) {
+        $('#em_depui_depositor_hold_instructions').val(em_depui_depositor_hold_instructions);
+    }
+
+    if (em_current_status.length > 0) {
+        //$("#em_current_status option[value=" + em_current_status + "]").attr("selected", "selected");
+        $("#em_current_status").val(em_current_status);
+
+    }
+
+    if (em_map_hold_date.length > 0) {
+        $('#em_map_hold_date').val(em_map_hold_date);
+    }
+
 
 }
 
@@ -352,6 +412,10 @@ function updateStatusFormEm() {
 
     if (em_header_release_date.length > 0) {
         $('#em_header_release_date').val(em_header_release_date);
+    }
+
+    if (em_depui_depositor_hold_instructions.length > 0) {
+        $('#em_depui_depositor_hold_instructions').val(em_depui_depositor_hold_instructions);
     }
 
     if (em_deposition_date.length > 0) {
@@ -664,6 +728,9 @@ function assignContext(jsonObj) {
     }
     if ('em_header_release_date' in jsonObj) {
         em_header_release_date = jsonObj.em_header_release_date;
+    }
+    if ('em_depui_depositor_hold_instructions' in jsonObj) {
+        em_depui_depositor_hold_instructions = jsonObj.em_depui_depositor_hold_instructions;
     }
     if ('em_replace_existing_entry_flag' in jsonObj) {
         em_replace_existing_entry_flag = jsonObj.em_replace_existing_entry_flag;
@@ -986,7 +1053,15 @@ $(document).ready(function() {
             }
         });
 
+    } // status-update-dialog
+
+
+    if ($("#status-other-dialog").length > 0) {
+	$('#status-other-form').ajaxForm(function() {
+	    alert("Thank you for your comment!");
+	});
     }
+
 
     if ($("#status-misc-report-dialog").length > 0) {
          $("#subheader").html(getSubHeader());
@@ -1068,6 +1143,7 @@ $(document).ready(function() {
     }
 
    if ($("#status-reload-files-dialog").length > 0) {
+       alert("RELOAD");
         $('#status-reload-files-form').ajaxForm({
             url: statusReloadUrl,
             dataType: 'json',
