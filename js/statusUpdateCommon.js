@@ -638,6 +638,7 @@ function appendContextToMenuUrls() {
         $("li.pdb-context").hide();
     }
 
+    // Not used anymore but maintain in case ever need
     if ((emdbId.length > 0 && reqacctypes.indexOf('EMDB') >= 0) || standaloneModeFirst) {
         $("li.em-context").show();
 	logContext('Showing EM context');
