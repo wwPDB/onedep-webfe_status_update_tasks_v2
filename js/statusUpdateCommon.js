@@ -72,6 +72,7 @@ setIdcodeUrl = '/service/status_update_tasks_v2/set_idcode';
 statusCreateFilesUrl = '/service/status_update_tasks_v2/create_files';
 statusMergeXyzUrl = '/service/status_update_tasks_v2/mergexyzcalc';
 processSiteUpdateUrl = '/service/status_update_tasks_v2/process_site_update';
+statusOtherUpdateUrl = '/service/status_update_tasks_v2/other_update';
 //
 setIdcodeEmUrl = '/service/status_update_tasks_v2/set_idcode_em';
 statusCodeUpdateEmUrl = '/service/status_update_tasks_v2/status_code_update_em';
@@ -367,7 +368,7 @@ function updateStatusForm() {
     }
 
     if (authRelCode.length > 0) {
-        $('#auth-status-code').val(authRelCode);
+        $('#new-auth-status-code').val(authRelCode);
         //$("#auth-status-code option[value=" + authRelCode + "]").attr("selected", "selected");
     }
     if (approvalType.length > 0) {
@@ -379,7 +380,7 @@ function updateStatusForm() {
         $('#annotator-initials').val(annotatorId);
     }
     if (holdCoordinatesDate.length > 0) {
-        $('#auth-status-hold-date').val(holdCoordinatesDate);
+        $('#new-auth-status-hold-date').val(holdCoordinatesDate);
     }
 
     if (processSite.length > 0) {
@@ -1080,9 +1081,45 @@ $(document).ready(function() {
 
 
     if ($("#status-other-dialog").length > 0) {
-	$('#status-other-form').ajaxForm(function() {
-	    alert("Thank you for your comment!");
-	});
+	$('#status-other-form').ajaxForm({
+            url: statusOtherUpdateUrl,
+            dataType: 'json',
+            success: function(jsonObj) {
+                logContext("Status-other Operation completed");
+                progressEnd();
+                updateCompletionStatus(jsonObj, '#status-other-form');
+                updateLinkContent(jsonObj, '#status-other-form');
+                updateReportContent(jsonObj, '#status-report-container');
+                $('#status-report-container  div.report-content').show();
+                $('#status-other-button').show();
+		// Parse data coming back
+                assignContext(jsonObj);
+                $("#subheader").html(getSubHeader());
+		// Needed?
+		updateStatusForm();
+	    },
+
+            beforeSubmit: function(formdata, $form, options) {
+                formdata.push({
+                    "name": "sessionid",
+                    "value": sessionId
+                });
+                formdata.push({
+                    "name": "idcode",
+                    "value": entryId
+                });
+                formdata.push({
+                    "name": "reqacctypes",
+                    "value": reqacctypes
+                });
+
+                $('#status-other-form div.op-status').hide();
+                $('#status-other-form div.op-links').hide();
+                $('#status-report-container  div.report-content').hide();
+                $('#status-other-button').hide();
+                progressStart();
+            }
+        });
     }
 
 

@@ -164,8 +164,8 @@
 
 	  <div class="row hiderel showpdb">
 	    <div class="col-sm-3">
-	      <label class="control-label" for="auth-status-code">PDB author release</label>
-	      <select id="auth-status-code" name="auth-status-code" class="form-control input-large">
+	      <label class="control-label" for="new-auth-status-code">PDB author release</label>
+	      <select id="new-auth-status-code" name="new-auth-status-code" class="form-control input-large">
 		<!-- <option selected="selected"  value="HPUB">HPUB</option> -->
                 <option                      value="HPUB">HPUB</option>
 		<option                      value="HOLD">HOLD</option>
@@ -176,10 +176,10 @@
 	  
 	    <div class="col-sm-5">
 		<div class="col-sm-4">
-		  <label for="auth-status-hold-date" class="control-label">PDB author hold date</label>
+		  <label for="new-auth-status-hold-date" class="control-label">PDB author hold date</label>
 		</div>
 		<div class="col-sm-4 input-group date form_date" data-date="" data-date-format="yyyy-mm-dd">
-		  <input id="auth-status-hold-date" name="auth-status-hold-date" class="form-control" size="12" type="text" value="" readonly>
+		  <input id="new-auth-status-hold-date" name="auth-status-hold-date" class="form-control" size="12" type="text" value="" readonly>
 		  <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 		  <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 		</div>
@@ -230,14 +230,15 @@
 	    </div>
 	    
             <div class="col-sm-1"><br/>
-	      <input id="status-code-XXXXX-button" style="float: right"class="btn btn-primary pull-right" TYPE="submit" VALUE="Go">
+	      <input id="status-other-button" style="float: right"class="btn btn-primary pull-right" TYPE="submit" VALUE="Go">
             </div>
 
 	  </div> <! -- end of row -->
-		    
-          <div id="status-reload-files-status2"   class="op-status"></div>
 
-        </fieldset>
+          <div id="status-other-status"   class="op-status"></div>
+	  <div id="status-other-links"    class="op-links"></div>
+
+	</fieldset>
       </form>
     </div> <!-- end other status section -->
 
