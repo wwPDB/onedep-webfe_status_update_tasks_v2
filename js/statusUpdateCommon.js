@@ -399,6 +399,20 @@ function updateStatusForm() {
         $("#status-code-approval-pulldown").hide();
     }
 
+    // Logic to determine if Set All to AUTH should be displayed
+    if ((ispdb && statusCode != "AUTH" && statusCode != "REL" && statusCode != "OBS") || 
+	(isem && em_current_status != "AUTH" && em_current_status != "REL" && em_current_status != "OBS")) {
+        $("#change-to-auth-button").show();
+    } else {
+        $("#change-to-auth-button").hide();
+    }
+
+    // Logic to determine if explicit approval button seen
+    if (approvalType.length > 0 && approvalType != "unassigned") {
+        $("#explicit-approval-button").hide();
+    } else {
+        $("#explicit-approval-button").show();
+    }
 
 
     if (postRelStatusCode.length > 0) {
@@ -1074,6 +1088,8 @@ $(document).ready(function() {
                 $('#status-code-button').show();
                 //JDW added
                 assignContext(jsonObj);
+		// To get buttons displayed
+		updateStatusForm();
                 $("#subheader").html(getSubHeader());
 
             },
