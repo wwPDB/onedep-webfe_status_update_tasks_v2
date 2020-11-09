@@ -66,7 +66,9 @@ var pagePath = '';
 //
 // Application task URLS
 statusMiscReportsUrl = '/service/status_update_tasks_v2/misc_reports';
+// Deprecared
 statusCodeUpdateUrl = '/service/status_update_tasks_v2/status_code_update';
+statusCodeUpdateV2Url = '/service/status_update_tasks_v2/status_code_update_v2';
 statusReloadUrl = '/service/status_update_tasks_v2/status_reload';
 setIdcodeUrl = '/service/status_update_tasks_v2/set_idcode';
 statusCreateFilesUrl = '/service/status_update_tasks_v2/create_files';
@@ -326,6 +328,25 @@ function ispdbentry() {
 
 function updateStatusForm() {
     logContext("+updateStatusForm - statusCode " + statusCode + " - postRelStatus " + postRelStatusCode);
+
+    if (em_current_status.length > 0) {
+        $(".showem").show();
+        $(".hideem").hide();
+    } else {
+        $(".showem").hide();
+        $(".hideem").show();
+    }
+
+    var showpdb = ispdbentry();
+    if (showpdb === true) {
+        $(".showpdb").show();
+        $(".hidepdb").hide();
+    } else {
+	$(".showpdb").hide();
+        $(".hidepdb").show();
+    }
+
+
     if (statusCode.length > 0) {
         $('#status-code').val(statusCode);
         $('#status-code2').val(statusCode);
@@ -337,27 +358,12 @@ function updateStatusForm() {
 	} else {
             $("#status-code-pulldown").show();
             $("#status-code-text").hide();
-            $(".hiderel").show();
+	    // We do not expliclty show - as will override show/hidepdb. But we do not allow status change from REL anyways
+            // $(".hiderel").show();
 	}
     }
     
-    if (em_current_status.length > 0) {
-        $(".showem").show();
-        $(".hideem").hide();
-    } else {
-        $(".showem").hide();
-        $(".hideem").show();
-    }
 
-    // Regretfully, EM map only has a current_status.  Need to be more clever
-    var showpdb = ispdbentry();
-    if (showpdb === true) {
-        $(".showpdb").show();
-        $(".hidepdb").hide();
-    } else {
-	$(".showpdb").hide();
-        $(".hidepdb").show();
-    }
 
     if (postRelStatusCode.length > 0) {
         $("#postrel-pulldown").show();
@@ -395,7 +401,7 @@ function updateStatusForm() {
 
     if (em_current_status.length > 0) {
         //$("#em_current_status option[value=" + em_current_status + "]").attr("selected", "selected");
-        $("#em_current_status").val(em_current_status);
+        $("#em_new_status").val(em_current_status);
 
     }
 
@@ -421,7 +427,7 @@ function updateStatusFormEm() {
 
     if (em_current_status.length > 0) {
         //$("#em_current_status option[value=" + em_current_status + "]").attr("selected", "selected");
-        $("#em_current_status").val(em_current_status);
+        $("#em_new_status").val(em_current_status);
 
     }
 
@@ -1020,7 +1026,7 @@ $(document).ready(function() {
         $("#subheader").html(getSubHeader());
         // status code update form
         $('#status-code-form').ajaxForm({
-            url: statusCodeUpdateUrl,
+            url: statusCodeUpdateV2Url,
             dataType: 'json',
             success: function(jsonObj) {
                 logContext("Operation completed");
@@ -1056,18 +1062,29 @@ $(document).ready(function() {
                     "name": "initialdepositdate",
                     "value": initialDepositDate
                 });
-                formdata.push({
-                    "name": "holdcoordinatesdate",
-                    "value": holdCoordinatesDate
-                });
+                // formdata.push({
+                //    "name": "holdcoordinatesdate",
+                //    "value": holdCoordinatesDate
+                // });
                 formdata.push({
                     "name": "coordinatesdate",
                     "value": coordinatesDate
                 });
+                //formdata.push({
+                //    "name": "authrelcode",
+                //    "value": authRelCode
+                //});
                 formdata.push({
-                    "name": "authrelcode",
-                    "value": authRelCode
+                    "name": "reqacctypes",
+                    "value": reqacctypes
                 });
+		// Send back current initials - no cross form data for status history
+		formdata.push({
+		    "name": "cur-annotator-initials",
+		    "value": annotatorId
+		});
+
+
 
                 $('#status-code-form div.op-status').hide();
                 $('#status-code-form div.op-links').hide();
