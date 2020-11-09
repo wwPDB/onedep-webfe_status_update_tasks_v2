@@ -51,6 +51,7 @@ var em_last_update = '';
 var em_map_hold_date = '';
 var em_map_release_date = '';
 var em_header_release_date = '';
+var em_depui_depositor_hold_instructions = '';
 var em_replace_existing_entry_flag = '';
 var em_title = '';
 //
@@ -65,12 +66,15 @@ var pagePath = '';
 //
 // Application task URLS
 statusMiscReportsUrl = '/service/status_update_tasks_v2/misc_reports';
+// Deprecared
 statusCodeUpdateUrl = '/service/status_update_tasks_v2/status_code_update';
+statusCodeUpdateV2Url = '/service/status_update_tasks_v2/status_code_update_v2';
 statusReloadUrl = '/service/status_update_tasks_v2/status_reload';
 setIdcodeUrl = '/service/status_update_tasks_v2/set_idcode';
 statusCreateFilesUrl = '/service/status_update_tasks_v2/create_files';
 statusMergeXyzUrl = '/service/status_update_tasks_v2/mergexyzcalc';
 processSiteUpdateUrl = '/service/status_update_tasks_v2/process_site_update';
+statusOtherUpdateUrl = '/service/status_update_tasks_v2/other_update';
 //
 setIdcodeEmUrl = '/service/status_update_tasks_v2/set_idcode_em';
 statusCodeUpdateEmUrl = '/service/status_update_tasks_v2/status_code_update_em';
@@ -166,17 +170,22 @@ function getEntryInfo() {
             // Reset any existing state --
         }
     }).done(function(jsonObj) {
+	logContext("Entryinfo context" + JSON.stringify(jsonObj))
         assignContext(jsonObj);
         renderContext();
         logContext("After done in getEntryInfo  - statusCode " + statusCode + " -postRelStatusCode " + postRelStatusCode);
+	// Asynchronous call - need to update here 
+	if ($("#status-identifier-dialog").length > 0) {
+            $("#subheader").html(getSubHeader());
+	}
         appendContextToMenuUrls();
         updateStatusForm();
-        if (em_current_status.length > 0) {
-            updateStatusFormEm();
-             if ($("#status-update-em-dialog").length > 0) {
-                 $("#subheader").html(getSubHeaderEm());
-             }
-        }
+        // if (em_current_status.length > 0) {
+        //    updateStatusFormEm();
+        //     if ($("#status-update-em-dialog").length > 0) {
+        //         $("#subheader").html(getSubHeaderEm());
+        //     }
+        // }
 	// Take down spinner
 	progressEnd();
     });
@@ -186,22 +195,46 @@ function getEntryInfo() {
 
 function getSubHeader() {
     //    var myText = entryId + '<br /><h5>';
+
+    var showpdb;
     var myText = '<span class="pull-right">' + entryId + '</span> <br /><h5>';
     logContext('getSubHeader ' + statusCode + ' : ' + postRelStatusCode);
+
+    var ispdb = false;
     if (statusCode.length > 0) {
-	if (postRelStatusCode.length == 0) {
-            myText += '&nbsp;&nbsp;&nbsp;&nbsp;Status: ' + statusCode;
-	} else {
-	    myText += '&nbsp;&nbsp;&nbsp;&nbsp;Status: ' + postRelStatusCode + '(' + statusCode + ')';
+	// Maponly sets a status code as well
+	ispdb = ispdbentry();
+	if (ispdb === true) {
+	    if (postRelStatusCode.length == 0) {
+		myText += '&nbsp;&nbsp;&nbsp;&nbsp;Status: ' + statusCode;
+	    } else {
+		myText += '&nbsp;&nbsp;&nbsp;&nbsp;Status: ' + postRelStatusCode + '(' + statusCode + ')';
+	    }
 	}
     }
 
-    if (authRelCode.length > 0) {
+    if (authRelCode.length > 0  && ispdb === true) {
         myText += '&nbsp;&nbsp; Author status: ' + authRelCode
     }
 
-    if (initialDepositDate.length > 0) {
+    if (ispdb == true && initialDepositDate.length > 0) {
         myText += '&nbsp;&nbsp; Deposited: ' + initialDepositDate
+    }
+
+
+    if (em_current_status.length > 0) {
+	if (ispdb === true) {
+	    myText += '<br />';
+	}
+        myText += '&nbsp;&nbsp;&nbsp;&nbsp;EMDB Status: ' + em_current_status;
+
+	if (em_depui_depositor_hold_instructions.length > 0) {
+	    myText += '&nbsp;&nbsp;Author status: ' + em_depui_depositor_hold_instructions;
+	}
+
+	if (ispdb == false && initialDepositDate.length > 0) {
+            myText += '&nbsp;&nbsp; Deposited: ' + initialDepositDate
+	}
     }
 
     if (annotatorId.length > 0) {
@@ -233,17 +266,17 @@ function getSubHeaderEm() {
     }
 
     /*
-    if (initialDepositDate.length > 0) {
-        myText += '&nbsp;&nbsp; Deposited: ' + initialDepositDate
-    }
+      if (initialDepositDate.length > 0) {
+      myText += '&nbsp;&nbsp; Deposited: ' + initialDepositDate
+      }
 
-    if (annotatorId.length > 0) {
-        myText += '<br />&nbsp;&nbsp; Annotator: ' + annotatorId
-    }
+      if (annotatorId.length > 0) {
+      myText += '<br />&nbsp;&nbsp; Annotator: ' + annotatorId
+      }
 
-    if (approvalType.length > 0) {
-        myText += '&nbsp;&nbsp; Approval type: ' + approvalType
-    }
+      if (approvalType.length > 0) {
+      myText += '&nbsp;&nbsp; Approval type: ' + approvalType
+      }
     */
     myText += '</h5>'
     logContext("After getSubHeaderEm() myText " + myText);
@@ -252,11 +285,16 @@ function getSubHeaderEm() {
 
 function renderContext() {
     /*
-         Load some cosmetic details in the top of page  --
-     */
-    if (structTitle.length > 0) {
+      Load some cosmetic details in the top of page  --
+    */
+    if (structTitle.length > 0 || em_title.length > 0) {
         $('#my_title').remove();
-        $('.page-header').append('<h5 id="my_title"> Title: ' + structTitle + '</h5>');
+	if (structTitle.length > 0) {
+            $('.page-header').append('<h5 id="my_title"> Title: ' + structTitle + '</h5>');
+	}
+	if (em_title.length > 0) {
+            $('.page-header').append('<h5 id="my_title"> EMDB Title: ' + em_title + '</h5>');
+	}
     } else {
         $('#my_title').hide();
     }
@@ -274,11 +312,59 @@ function renderContext() {
     //$("#subheader").html(getSubHeader());
 }
 
+function ispdbentry() {
+    // Function to return if this is a PDB entry.
+    // Checks requested accession codes. If not set (legacy) than 
+    // is.  Returns booksan
+    var showpdb = false;
+    if (reqacctypes.length < 2) {
+	// No accession codes, assume legacy
+	showpdb = true;
+    } else if (reqacctypes.indexOf('PDB') >= 0) {
+	showpdb = true;
+    }
+    return showpdb;
+};
+
+function isementry() {
+    // Function to return if this is a EMDB entry.
+    // Checks requested accession codes. If not set (legacy) than 
+    // is.  Returns booksan
+    var showem = false;
+    if (reqacctypes.length < 2) {
+	// No accession codes, assume legacy - not emdb
+	showem = false;
+    } else if (reqacctypes.indexOf('EMDB') >= 0) {
+	showem = true;
+    }
+    return showem;
+};
+
 function updateStatusForm() {
     logContext("+updateStatusForm - statusCode " + statusCode + " - postRelStatus " + postRelStatusCode);
+
+    if (em_current_status.length > 0) {
+        $(".showem").show();
+        $(".hideem").hide();
+    } else {
+        $(".showem").hide();
+        $(".hideem").show();
+    }
+
+    var showpdb = ispdbentry();
+    if (showpdb === true) {
+        $(".showpdb").show();
+        $(".hidepdb").hide();
+    } else {
+	$(".showpdb").hide();
+        $(".hidepdb").show();
+    }
+
+
     if (statusCode.length > 0) {
         $('#status-code').val(statusCode);
         $('#status-code2').val(statusCode);
+        $('#status-code2em').val(em_current_status);
         //$("#status-code option[value=" + statusCode + "]").attr("selected", "selected");
 	if (statusCode == 'REL' || statusCode == 'OBS') {
             $("#status-code-pulldown").hide();
@@ -287,9 +373,47 @@ function updateStatusForm() {
 	} else {
             $("#status-code-pulldown").show();
             $("#status-code-text").hide();
-            $(".hiderel").show();
+	    // We do not expliclty show - as will override show/hidepdb. But we do not allow status change from REL anyways
+            // $(".hiderel").show();
+	}
+
+	if (em_current_status == 'REL' || em_current_status == 'OBS') {
+            $("#status-code-em-pulldown").hide();
+            $("#status-code-em-text").show();
+            $(".hiderelem").hide();
+	} else {
+            $("#status-code-em-pulldown").show();
+            $("#status-code-em-text").hide();
+	    // We do not expliclty show - as will override show/hidepdb. But we do not allow status change from REL anyways
+            // $(".hiderel").show();
 	}
     }
+    
+    // Logic to determine if approval should be displayed
+    var ispdb = ispdbentry();
+    var isem = isementry();
+    if ((ispdb && statusCode != "REL" && statusCode != "OBS") || 
+	(isem && em_current_status != "REL" && em_current_status != "OBS")) {
+        $("#status-code-approval-pulldown").show();
+    } else {
+        $("#status-code-approval-pulldown").hide();
+    }
+
+    // Logic to determine if Set All to AUTH should be displayed
+    if ((ispdb && statusCode != "AUTH" && statusCode != "REL" && statusCode != "OBS") || 
+	(isem && em_current_status != "AUTH" && em_current_status != "REL" && em_current_status != "OBS")) {
+        $("#change-to-auth-button").show();
+    } else {
+        $("#change-to-auth-button").hide();
+    }
+
+    // Logic to determine if explicit approval button seen
+    if (approvalType.length > 0 && approvalType != "unassigned") {
+        $("#explicit-approval-button").hide();
+    } else {
+        $("#explicit-approval-button").show();
+    }
+
 
     if (postRelStatusCode.length > 0) {
         $("#postrel-pulldown").show();
@@ -300,7 +424,7 @@ function updateStatusForm() {
     }
 
     if (authRelCode.length > 0) {
-        $('#auth-status-code').val(authRelCode);
+        $('#new-auth-status-code').val(authRelCode);
         //$("#auth-status-code option[value=" + authRelCode + "]").attr("selected", "selected");
     }
     if (approvalType.length > 0) {
@@ -312,7 +436,7 @@ function updateStatusForm() {
         $('#annotator-initials').val(annotatorId);
     }
     if (holdCoordinatesDate.length > 0) {
-        $('#auth-status-hold-date').val(holdCoordinatesDate);
+        $('#new-auth-status-hold-date').val(holdCoordinatesDate);
     }
 
     if (processSite.length > 0) {
@@ -320,24 +444,40 @@ function updateStatusForm() {
 	$("#process-site").val(processSite);
     }
 
+    // Single form
+    if (em_depui_depositor_hold_instructions.length > 0) {
+        $('#em_depui_depositor_hold_instructions').val(em_depui_depositor_hold_instructions);
+    }
+
+    if (em_current_status.length > 0) {
+        //$("#em_current_status option[value=" + em_current_status + "]").attr("selected", "selected");
+        $("#em_new_status").val(em_current_status);
+
+    }
+
+    if (em_map_hold_date.length > 0) {
+        $('#em_map_hold_date').val(em_map_hold_date);
+    }
+
+
 }
 
 function updateStatusFormEm() {
     /*
-    var em_current_status = '';
-    var em_deposition_date = '';
-    var em_deposition_site = '';
-    var em_details = '';
-    var em_last_update = '';
-    var em_map_release_date = '';
-    var em_replace_existing_entry_flag = '';
-    var em_title = '';
-     */
+      var em_current_status = '';
+      var em_deposition_date = '';
+      var em_deposition_site = '';
+      var em_details = '';
+      var em_last_update = '';
+      var em_map_release_date = '';
+      var em_replace_existing_entry_flag = '';
+      var em_title = '';
+    */
     logContext("+updateStatusFormEm - em_current_status " + em_current_status);
 
     if (em_current_status.length > 0) {
         //$("#em_current_status option[value=" + em_current_status + "]").attr("selected", "selected");
-        $("#em_current_status").val(em_current_status);
+        $("#em_new_status").val(em_current_status);
 
     }
 
@@ -352,6 +492,10 @@ function updateStatusFormEm() {
 
     if (em_header_release_date.length > 0) {
         $('#em_header_release_date').val(em_header_release_date);
+    }
+
+    if (em_depui_depositor_hold_instructions.length > 0) {
+        $('#em_depui_depositor_hold_instructions').val(em_depui_depositor_hold_instructions);
     }
 
     if (em_deposition_date.length > 0) {
@@ -550,6 +694,7 @@ function appendContextToMenuUrls() {
         $("li.pdb-context").hide();
     }
 
+    // Not used anymore but maintain in case ever need
     if ((emdbId.length > 0 && reqacctypes.indexOf('EMDB') >= 0) || standaloneModeFirst) {
         $("li.em-context").show();
 	logContext('Showing EM context');
@@ -664,6 +809,9 @@ function assignContext(jsonObj) {
     }
     if ('em_header_release_date' in jsonObj) {
         em_header_release_date = jsonObj.em_header_release_date;
+    }
+    if ('em_depui_depositor_hold_instructions' in jsonObj) {
+        em_depui_depositor_hold_instructions = jsonObj.em_depui_depositor_hold_instructions;
     }
     if ('em_replace_existing_entry_flag' in jsonObj) {
         em_replace_existing_entry_flag = jsonObj.em_replace_existing_entry_flag;
@@ -859,7 +1007,7 @@ $(document).ready(function() {
 
 
     if ($("#status-identifier-dialog").length > 0) {
-         $("#subheader").html(getSubHeader());
+        $("#subheader").html(getSubHeader());
         if (standaloneMode) {
             //
             $("#status-identifier-dialog").removeClass("displaynone");
@@ -925,10 +1073,34 @@ $(document).ready(function() {
     }
 
     if ($("#status-update-dialog").length > 0) {
+        // Handle change to AUTH button
+        $('#change-to-auth-button').click(function() {
+	    var ispdb = ispdbentry();
+	    var isem = isementry();
+	    if (ispdb && statusCode != "REL" && statusCode != "OBS") {
+		$('#status-code').val("AUTH");
+		$('#status-code2').val("AUTH");
+	    }
+
+	    if (isem && em_current_status != "REL" && em_current_status != "OBS") {
+		$('#status-code2em').val("AUTH");
+	    }
+	    $('#status-code-button').trigger('click');
+	});
+
+        // Handle explicit approval button
+        $('#explicit-approval-button').click(function() {
+	    approvalType = "explicit";
+            $('#approval-type').val(approvalType);
+	    $('#status-code-button').trigger('click');
+	});
+
+
+
         $("#subheader").html(getSubHeader());
         // status code update form
         $('#status-code-form').ajaxForm({
-            url: statusCodeUpdateUrl,
+            url: statusCodeUpdateV2Url,
             dataType: 'json',
             success: function(jsonObj) {
                 logContext("Operation completed");
@@ -936,10 +1108,13 @@ $(document).ready(function() {
                 updateCompletionStatus(jsonObj, '#status-code-form');
                 updateLinkContent(jsonObj, '#status-code-form');
                 updateReportContent(jsonObj, '#status-report-container');
+		displayReportContent(jsonObj, '#status-update-container');
                 $('#status-report-container  div.report-content').show();
                 $('#status-code-button').show();
                 //JDW added
                 assignContext(jsonObj);
+		// To get buttons displayed
+		updateStatusForm();
                 $("#subheader").html(getSubHeader());
 
             },
@@ -964,18 +1139,29 @@ $(document).ready(function() {
                     "name": "initialdepositdate",
                     "value": initialDepositDate
                 });
-                formdata.push({
-                    "name": "holdcoordinatesdate",
-                    "value": holdCoordinatesDate
-                });
+                // formdata.push({
+                //    "name": "holdcoordinatesdate",
+                //    "value": holdCoordinatesDate
+                // });
                 formdata.push({
                     "name": "coordinatesdate",
                     "value": coordinatesDate
                 });
+                //formdata.push({
+                //    "name": "authrelcode",
+                //    "value": authRelCode
+                //});
                 formdata.push({
-                    "name": "authrelcode",
-                    "value": authRelCode
+                    "name": "reqacctypes",
+                    "value": reqacctypes
                 });
+		// Send back current initials - no cross form data for status history
+		formdata.push({
+		    "name": "cur-annotator-initials",
+		    "value": annotatorId
+		});
+
+
 
                 $('#status-code-form div.op-status').hide();
                 $('#status-code-form div.op-links').hide();
@@ -986,7 +1172,51 @@ $(document).ready(function() {
             }
         });
 
+    } // status-update-dialog
+
+
+    if ($("#status-other-dialog").length > 0) {
+	$('#status-other-form').ajaxForm({
+            url: statusOtherUpdateUrl,
+            dataType: 'json',
+            success: function(jsonObj) {
+                logContext("Status-other Operation completed");
+                progressEnd();
+                updateCompletionStatus(jsonObj, '#status-other-form');
+                updateLinkContent(jsonObj, '#status-other-form');
+                updateReportContent(jsonObj, '#status-report-container');
+                $('#status-report-container  div.report-content').show();
+                $('#status-other-button').show();
+		// Parse data coming back
+                assignContext(jsonObj);
+                $("#subheader").html(getSubHeader());
+		// Needed?
+		updateStatusForm();
+	    },
+
+            beforeSubmit: function(formdata, $form, options) {
+                formdata.push({
+                    "name": "sessionid",
+                    "value": sessionId
+                });
+                formdata.push({
+                    "name": "idcode",
+                    "value": entryId
+                });
+                formdata.push({
+                    "name": "reqacctypes",
+                    "value": reqacctypes
+                });
+
+                $('#status-other-form div.op-status').hide();
+                $('#status-other-form div.op-links').hide();
+                $('#status-report-container  div.report-content').hide();
+                $('#status-other-button').hide();
+                progressStart();
+            }
+        });
     }
+
 
     if ($("#status-misc-report-dialog").length > 0) {
          $("#subheader").html(getSubHeader());
