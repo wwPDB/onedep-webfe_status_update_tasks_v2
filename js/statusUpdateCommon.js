@@ -464,15 +464,15 @@ function updateStatusForm() {
 
 function updateStatusFormEm() {
     /*
-    var em_current_status = '';
-    var em_deposition_date = '';
-    var em_deposition_site = '';
-    var em_details = '';
-    var em_last_update = '';
-    var em_map_release_date = '';
-    var em_replace_existing_entry_flag = '';
-    var em_title = '';
-     */
+      var em_current_status = '';
+      var em_deposition_date = '';
+      var em_deposition_site = '';
+      var em_details = '';
+      var em_last_update = '';
+      var em_map_release_date = '';
+      var em_replace_existing_entry_flag = '';
+      var em_title = '';
+    */
     logContext("+updateStatusFormEm - em_current_status " + em_current_status);
 
     if (em_current_status.length > 0) {
@@ -1007,7 +1007,7 @@ $(document).ready(function() {
 
 
     if ($("#status-identifier-dialog").length > 0) {
-         $("#subheader").html(getSubHeader());
+        $("#subheader").html(getSubHeader());
         if (standaloneMode) {
             //
             $("#status-identifier-dialog").removeClass("displaynone");
@@ -1073,6 +1073,30 @@ $(document).ready(function() {
     }
 
     if ($("#status-update-dialog").length > 0) {
+        // Handle change to AUTH button
+        $('#change-to-auth-button').click(function() {
+	    var ispdb = ispdbentry();
+	    var isem = isementry();
+	    if (ispdb && statusCode != "REL" && statusCode != "OBS") {
+		$('#status-code').val("AUTH");
+		$('#status-code2').val("AUTH");
+	    }
+
+	    if (isem && em_current_status != "REL" && em_current_status != "OBS") {
+		$('#status-code2em').val("AUTH");
+	    }
+	    $('#status-code-button').trigger('click');
+	});
+
+        // Handle explicit approval button
+        $('#explicit-approval-button').click(function() {
+	    approvalType = "explicit";
+            $('#approval-type').val(approvalType);
+	    $('#status-code-button').trigger('click');
+	});
+
+
+
         $("#subheader").html(getSubHeader());
         // status code update form
         $('#status-code-form').ajaxForm({
