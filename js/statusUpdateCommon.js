@@ -326,6 +326,20 @@ function ispdbentry() {
     return showpdb;
 };
 
+function isementry() {
+    // Function to return if this is a EMDB entry.
+    // Checks requested accession codes. If not set (legacy) than 
+    // is.  Returns booksan
+    var showem = false;
+    if (reqacctypes.length < 2) {
+	// No accession codes, assume legacy - not emdb
+	showem = false;
+    } else if (reqacctypes.indexOf('EMDB') >= 0) {
+	showem = true;
+    }
+    return showem;
+};
+
 function updateStatusForm() {
     logContext("+updateStatusForm - statusCode " + statusCode + " - postRelStatus " + postRelStatusCode);
 
@@ -350,6 +364,7 @@ function updateStatusForm() {
     if (statusCode.length > 0) {
         $('#status-code').val(statusCode);
         $('#status-code2').val(statusCode);
+        $('#status-code2em').val(em_current_status);
         //$("#status-code option[value=" + statusCode + "]").attr("selected", "selected");
 	if (statusCode == 'REL' || statusCode == 'OBS') {
             $("#status-code-pulldown").hide();
@@ -361,8 +376,29 @@ function updateStatusForm() {
 	    // We do not expliclty show - as will override show/hidepdb. But we do not allow status change from REL anyways
             // $(".hiderel").show();
 	}
+
+	if (em_current_status == 'REL' || em_current_status == 'OBS') {
+            $("#status-code-em-pulldown").hide();
+            $("#status-code-em-text").show();
+            $(".hiderelem").hide();
+	} else {
+            $("#status-code-em-pulldown").show();
+            $("#status-code-em-text").hide();
+	    // We do not expliclty show - as will override show/hidepdb. But we do not allow status change from REL anyways
+            // $(".hiderel").show();
+	}
     }
     
+    // Logic to determine if approval should be displayed
+    var ispdb = ispdbentry();
+    var isem = isementry();
+    if ((ispdb && statusCode != "REL" && statusCode != "OBS") || 
+	(isem && em_current_status != "REL" && em_current_status != "OBS")) {
+        $("#status-code-approval-pulldown").show();
+    } else {
+        $("#status-code-approval-pulldown").hide();
+    }
+
 
 
     if (postRelStatusCode.length > 0) {

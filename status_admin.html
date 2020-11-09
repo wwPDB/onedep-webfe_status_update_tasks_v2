@@ -65,35 +65,45 @@
 
 
 		  <div id="status-code-text" style="display:none">
-		    <label for "status-code-text" class="control-label">Processing Status Code</label>
+		    <label for "status-code-text" class="control-label">PDB status</label>
                     <input id="status-code2" name="status-code-text" class="form-control" size="12" type="text" value="" readonly>
 		  </div>
 
 		</div>
 
                 <div class="col-sm-3 showem">
-                  <label for="em_new_status" class="control-label">EMDB status</label>
-                  <select id="em_new_status" name="em_new_status" class="form-control input-large">
-                    <option value="AUTH">AUTH</option>
-                    <option value="HOLD">HOLD</option>
-                    <option value="HPUB">HPUB</option>
-                    <option value="POLC">POLC</option>
-                    <option value="PROC">PROC</option>
-                    <option value="REFI">REFI</option>
-                    <option value="REPL">REPL</option>
-                    <option value="WAIT">WAIT</option>
-                    <option value="WDRN">WDRN</option>
-                    <!--
-                        <option value="PROC">PROC</option>
-                    <option value="REFI">REFI</option>
-                    <option value="AUCO">AUCO</option>
-                    <option value="OBS">OBS</option>
-                    -->
-                  </select>
-                </div>
+		  <div id="status-code-em-pulldown">
+                    <label for="em_new_status" class="control-label">EMDB status</label>
+                    <select id="em_new_status" name="em_new_status" class="form-control input-large">
+                      <option value="AUTH">AUTH</option>
+                      <option value="HOLD">HOLD</option>
+                      <option value="HPUB">HPUB</option>
+                      <option value="POLC">POLC</option>
+                      <option value="PROC">PROC</option>
+                      <option value="REFI">REFI</option>
+                      <option value="REPL">REPL</option>
+                      <option value="WAIT">WAIT</option>
+                      <option value="WDRN">WDRN</option>
+                      <!--
+                       <option value="PROC">PROC</option>
+                      <option value="REFI">REFI</option>
+                      <option value="AUCO">AUCO</option>
+                      <option value="OBS">OBS</option>
+                      -->
+                    </select>
+                  </div>
+
+
+		  <div id="status-code-em-text" style="display:none">
+		    <label for "status-code-em-text" class="control-label">EMDB Status</label>
+                    <input id="status-code2em" name="status-code-text" class="form-control" size="12" type="text" value="" readonly>
+		  </div>
+
+
+		</div>
 
 		<div class="col-sm-2">
-		  <div class="hiderel">
+		  <div id="status-code-approval-pulldown">
 		    <label for="approval-type" class="control-label">Approval type</label>
 		    <select id="approval-type" name="approval-type" class="form-control  input-large">
 		      <option                      value="unassigned">unassigned</option>
