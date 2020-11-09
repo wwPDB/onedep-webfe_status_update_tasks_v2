@@ -1108,6 +1108,7 @@ $(document).ready(function() {
                 updateCompletionStatus(jsonObj, '#status-code-form');
                 updateLinkContent(jsonObj, '#status-code-form');
                 updateReportContent(jsonObj, '#status-report-container');
+		displayReportContent(jsonObj, '#status-update-container');
                 $('#status-report-container  div.report-content').show();
                 $('#status-code-button').show();
                 //JDW added
