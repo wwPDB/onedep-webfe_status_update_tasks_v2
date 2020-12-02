@@ -1083,6 +1083,7 @@ $(document).ready(function() {
 	    }
 
 	    if (isem && em_current_status != "REL" && em_current_status != "OBS") {
+		$('#em_new_status').val("AUTH");
 		$('#status-code2em').val("AUTH");
 	    }
 	    $('#status-code-button').trigger('click');
