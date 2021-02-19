@@ -437,6 +437,8 @@ function updateStatusForm() {
     }
     if (holdCoordinatesDate.length > 0) {
         $('#new-auth-status-hold-date').val(holdCoordinatesDate);
+	$(".form_date").datetimepicker('update');
+
     }
 
     if (processSite.length > 0) {
@@ -457,6 +459,8 @@ function updateStatusForm() {
 
     if (em_map_hold_date.length > 0) {
         $('#em_map_hold_date').val(em_map_hold_date);
+	// With date filled in - pickup the default date
+	$(".form_date_emdb").datetimepicker('update');
     }
 
 
@@ -991,6 +995,20 @@ $(document).ready(function() {
     var dayOfMonth = myDate2.getDate();
     myDate2.setDate(dayOfMonth + 500);
     $(".form_date").datetimepicker({
+        //      format: 'yyyy-mm-dd',
+        //	startDate: '+0d',
+        startDate: myDate1,
+        //      endDate: '+1y',
+        endDate: myDate2,
+        weekStart: 1,
+        //        todayBtn:  1,
+        autoclose: 1,
+        //        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0
+    });
+    $(".form_date_emdb").datetimepicker({
         //      format: 'yyyy-mm-dd',
         //	startDate: '+0d',
         startDate: myDate1,
