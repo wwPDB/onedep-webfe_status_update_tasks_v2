@@ -388,7 +388,8 @@ function updateStatusForm() {
             // $(".hiderel").show();
 	}
     }
-    
+
+    // -----------------------    
     // Logic to determine if approval should be displayed
     var ispdb = ispdbentry();
     var isem = isementry();
@@ -400,21 +401,38 @@ function updateStatusForm() {
     }
 
     // Logic to determine if Set All to AUTH should be displayed
-    if ((ispdb && statusCode != "AUTH" && statusCode != "REL" && statusCode != "OBS") || 
-	(isem && em_current_status != "AUTH" && em_current_status != "REL" && em_current_status != "OBS")) {
+    if ((ispdb && "AUTH" && statusCode != "REL" && statusCode != "OBS"  && statusCode != "WDRN") || 
+	(isem && em_current_status != "AUTH" && em_current_status != "REL" && em_current_status != "OBS" && em_current_status != "WDRN")) {
         $("#change-to-auth-button").show();
     } else {
         $("#change-to-auth-button").hide();
     }
 
+    // -----------------------
     // Logic to determine if explicit approval button seen
-    if (approvalType.length > 0 && approvalType != "unassigned") {
+    // Unless author requested status is REL and not at terminal step (HPUB/HOLD/REL/OBS/PROC) display
+    var disp_approval = false;
+
+    if (approvalType.length == 0 ||  approvalType == "unassigned") {
+	disp_approval = true;
+    }
+
+    if (ispdb && (authRelCode != "REL") && ["HPUB", "HOLD", "REL", "OBS", "PROC", "WDRN", "POLC"].indexOf(statusCode) == -1) {
+	disp_approval = true;
+    }
+
+    if (isem && (em_depui_depositor_hold_instructions != "REL") && ["HPUB", "HOLD", "HOLD8W", "REL", "OBS", "PROC", "WDRN", "POLC"].indexOf(em_current_status) == -1) {
+	disp_approval = true;
+    }
+
+    if (disp_approval == false) {
         $("#explicit-approval-button").hide();
     } else {
         $("#explicit-approval-button").show();
     }
 
-
+    // -----------------------
+    // PostRelStatus
     if (postRelStatusCode.length > 0) {
         $("#postrel-pulldown").show();
         $('#postrel-status-code').val(postRelStatusCode);
@@ -1104,6 +1122,12 @@ $(document).ready(function() {
 		$('#em_new_status').val("AUTH");
 		$('#status-code2em').val("AUTH");
 	    }
+
+	    // Unassigned approval
+	    approvalType = "unassigned";
+            $('#approval-type').val(approvalType);
+	    
+	    // Activate status code update
 	    $('#status-code-button').trigger('click');
 	});
 
@@ -1111,6 +1135,30 @@ $(document).ready(function() {
         $('#explicit-approval-button').click(function() {
 	    approvalType = "explicit";
             $('#approval-type').val(approvalType);
+
+	    // Set status code if appropriate
+	    var nochange = ["HPUB", "HOLD", "REL", "OBS", "PROC", "WAIT", "WDRN", "POLC"];
+	    var ispdb = ispdbentry();
+	    var isem = isementry();
+	    
+	    if (ispdb && nochange.indexOf(statusCode) == -1) {
+		// Potential change status.
+		if (authRelCode != "REL") {
+		    statusCode = authRelCode;
+		    $('#status-code').val(statusCode);
+		    $('#status-code2').val(statusCode);
+		}
+	    };
+
+	    if (isem && nochange.indexOf(em_current_status) == -1) {
+		// Potential change status.
+		if (em_depui_depositor_hold_instructions != "REL") {
+		    em_current_status = em_depui_depositor_hold_instructions;
+		    $("#em_new_status").val(em_current_status);
+		}
+	    };
+
+
 	    $('#status-code-button').trigger('click');
 	});
 
