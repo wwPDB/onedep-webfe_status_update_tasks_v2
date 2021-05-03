@@ -410,19 +410,17 @@ function updateStatusForm() {
 
     // -----------------------
     // Logic to determine if explicit approval button seen
-    // Unless author requested status is REL and not at terminal step (HPUB/HOLD/REL/OBS/PROC) display
+    // Unless author requested status is REL and not at terminal step (HPUB/HOLD/REL/OBS/PROC) display and not set already
     var disp_approval = false;
 
     if (approvalType.length == 0 ||  approvalType == "unassigned") {
-	disp_approval = true;
-    }
+	if (ispdb && (authRelCode != "REL") && ["HPUB", "HOLD", "REL", "OBS", "PROC", "WDRN", "POLC"].indexOf(statusCode) == -1) {
+	    disp_approval = true;
+	}
 
-    if (ispdb && (authRelCode != "REL") && ["HPUB", "HOLD", "REL", "OBS", "PROC", "WDRN", "POLC"].indexOf(statusCode) == -1) {
-	disp_approval = true;
-    }
-
-    if (isem && (em_depui_depositor_hold_instructions != "REL") && ["HPUB", "HOLD", "HOLD8W", "REL", "OBS", "PROC", "WDRN", "POLC"].indexOf(em_current_status) == -1) {
-	disp_approval = true;
+	if (isem && (em_depui_depositor_hold_instructions != "REL") && ["HPUB", "HOLD", "HOLD8W", "REL", "OBS", "PROC", "WDRN", "POLC"].indexOf(em_current_status) == -1) {
+	    disp_approval = true;
+	}
     }
 
     if (disp_approval == false) {
