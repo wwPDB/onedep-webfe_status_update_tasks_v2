@@ -63,6 +63,9 @@ var errorFlag = '';
 var errotText = '';
 //
 var pagePath = '';
+// Do not update picker until init
+var datetimeInit = false;
+
 //
 // Application task URLS
 statusMiscReportsUrl = '/service/status_update_tasks_v2/misc_reports';
@@ -453,7 +456,10 @@ function updateStatusForm() {
     }
     if (holdCoordinatesDate.length > 0) {
         $('#new-auth-status-hold-date').val(holdCoordinatesDate);
-	$(".form_date").datetimepicker('update');
+	if (datetimeInit) {
+	    // Do not invoke update until init - otherwise minview is wrong
+	    $(".form_date").datetimepicker('update');
+	}
 
     }
 
@@ -476,7 +482,10 @@ function updateStatusForm() {
     if (em_map_hold_date.length > 0) {
         $('#em_map_hold_date').val(em_map_hold_date);
 	// With date filled in - pickup the default date
-	$(".form_date_emdb").datetimepicker('update');
+	if (datetimeInit) {
+	    // Do not invoke update until init - otherwise minview is wrong
+	    $(".form_date_emdb").datetimepicker('update');
+	}
     }
 
 
@@ -1024,6 +1033,7 @@ $(document).ready(function() {
         minView: 2,
         forceParse: 0
     });
+
     $(".form_date_emdb").datetimepicker({
         //      format: 'yyyy-mm-dd',
         //	startDate: '+0d',
@@ -1038,6 +1048,8 @@ $(document).ready(function() {
         minView: 2,
         forceParse: 0
     });
+
+    datetimeInit = true;
 
 
     if ($("#status-identifier-dialog").length > 0) {
