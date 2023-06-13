@@ -365,6 +365,60 @@ function updateStatusForm() {
 
 
     if (statusCode.length > 0) {
+        var statusCodeList = [ "HPUB", "AUTH", "HOLD", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
+        if (authRelCode.length > 0) {
+            if (authRelCode == "REL") {
+                statusCodeList = [ "AUTH", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
+                if (statusCode == "HPUB") {
+                    statusCodeList = [ "HPUB", "AUTH", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
+                } else if (statusCode == "HOLD") {
+                    statusCodeList = [ "AUTH", "HOLD", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
+                }
+            } else if (authRelCode == "HPUB") {
+                statusCodeList = [ "HPUB", "AUTH", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
+                if (statusCode == "HOLD") {
+                    statusCodeList = [ "HPUB", "AUTH", "HOLD", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
+                }
+            } else if (authRelCode == "HOLD") {
+                statusCodeList = [ "AUTH", "HOLD", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
+                if (statusCode == "HPUB") {
+                    statusCodeList = [ "HPUB", "AUTH", "HOLD", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
+                }
+            }
+        }
+        var optionList = "";
+        for (var i = 0; i < statusCodeList.length; i++) {
+            optionList += '<option value="' + statusCodeList[i] + '">' + statusCodeList[i] + '</option>\n';
+        }
+        $('#status-code').empty().append(optionList);
+
+        var emStatusCodeList = [ "AUTH", "HOLD", "HPUB", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+        if (em_depui_depositor_hold_instructions.length > 0) {
+            if (em_depui_depositor_hold_instructions == "REL"){
+                emStatusCodeList = [ "AUTH", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                if ((em_current_status.length > 0) && (em_current_status == "HPUB")) {
+                    emStatusCodeList = [ "AUTH", "HPUB", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                } else if ((em_current_status.length > 0) && (em_current_status == "HOLD")) {
+                    emStatusCodeList = [ "AUTH", "HOLD", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                }
+            } else if (em_depui_depositor_hold_instructions == "HPUB") {
+                emStatusCodeList = [ "AUTH", "HPUB", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                if ((em_current_status.length > 0) && (em_current_status == "HOLD")) {
+                    emStatusCodeList = [ "AUTH", "HOLD", "HPUB", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                }
+            } else if (em_depui_depositor_hold_instructions == "HOLD") {
+                emStatusCodeList = [ "AUTH", "HOLD", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                if ((em_current_status.length > 0) && (em_current_status == "HPUB")) {
+                     emStatusCodeList = [ "AUTH", "HOLD", "HPUB", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                }
+            }
+        }
+        var emOptionList = "";
+        for (var i = 0; i < emStatusCodeList.length; i++) {
+            emOptionList += '<option value="' + emStatusCodeList[i] + '">' + emStatusCodeList[i] + '</option>\n';
+        }
+        $('#em_new_status').empty().append(emOptionList);
+
         $('#status-code').val(statusCode);
         $('#status-code2').val(statusCode);
         $('#status-code2em').val(em_current_status);

@@ -196,7 +196,7 @@
 		  <label for="new-auth-status-hold-date" class="control-label">PDB author hold date</label>
 		</div>
 		<div class="col-sm-4 input-group date form_date" data-date="" data-date-format="yyyy-mm-dd">
-		  <input id="new-auth-status-hold-date" name="auth-status-hold-date" class="form-control" size="12" type="text" value="" readonly>
+		  <input id="new-auth-status-hold-date" name="auth-status-hold-date" class="form-control" size="12" type="text" style="width:100px;" value="" readonly>
 		  <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 		  <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 		</div>
@@ -222,7 +222,7 @@
 		<label for="em_map_hold_date" class="control-label">EMDB author hold date</label>
               </div>
 	      <div class="col-sm-4 input-group date form_date_emdb showem" data-date="" data-date-format="yyyy-mm-dd">
-		<input id="em_map_hold_date" name="em_map_hold_date" class="form-control" size="12" type="text" value="" readonly>
+		<input id="em_map_hold_date" name="em_map_hold_date" class="form-control" size="12" type="text" style="width:100px;" value="" readonly>
 		<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 		<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 	      </div>
@@ -306,9 +306,9 @@
 	    </fieldset>
 	  </form>
 	</div> <!-- end status file create dialog -->
-
+<!--
 	<div id="status-misc-report-dialog">
-	  <!-- Report operations -->
+	  // Report operations 
 	  <form id="status-misc-report-form" method="post"   enctype="application/x-www-form-urlencoded" name="status-misc-report-form" class="form-inline" >
 	    <input name="contentType" TYPE="hidden" VALUE="model">
 	    <fieldset>
@@ -319,10 +319,10 @@
 		<option selected="selected"    value="report">Create entry report</option>
 		<option                        value="check">Entry dictionary check report</option>
 		<option                        value="checkv4">Entry dictionary check (V4) report</option>
-		<!--
-		    <option                      value="fetch_entry">Fetch entry file</option>
-		<option                      value="fetch_sf">Fetch structure factor file</option>
-		-->
+		
+		//    <option                      value="fetch_entry">Fetch entry file</option>
+		// <option                      value="fetch_sf">Fetch structure factor file</option>
+		
 	      </select>
 
 	      <input id="status-misc-report-button" class="btn btn-primary" TYPE="submit" VALUE="Go">
@@ -330,8 +330,8 @@
 	      <div id="status-misc-report-links"    class="op-links"></div>
 	    </fieldset>
 	  </form>
-	</div>  <!-- end status report dialog -->
-
+	</div>  // end status report dialog 
+-->
 
 	<div id="status-report-container">
 	  <div id="status-misc-report"  class="report-content"></div>
