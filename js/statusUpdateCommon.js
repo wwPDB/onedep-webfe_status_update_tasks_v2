@@ -80,7 +80,7 @@ processSiteUpdateUrl = '/service/status_update_tasks_v2/process_site_update';
 statusOtherUpdateUrl = '/service/status_update_tasks_v2/other_update';
 //
 setIdcodeEmUrl = '/service/status_update_tasks_v2/set_idcode_em';
-statusCodeUpdateEmUrl = '/service/status_update_tasks_v2/status_code_update_em';
+//statusCodeUpdateEmUrl = '/service/status_update_tasks_v2/status_code_update_em';
 
 var newSessionServiceUrl = '/service/status_update_tasks_v2/newsession';
 //var getSessionInfoServiceUrl = '/service/status_update_tasks_v2/getsessioninfo';
@@ -1623,67 +1623,6 @@ $(document).ready(function() {
         }
     }
 
-    if ($("#status-update-em-dialog").length > 0) {
-        $("#subheader").html(getSubHeaderEm());
-        <!-- status code update form -->
-        $('#status-code-em-form').ajaxForm({
-            url: statusCodeUpdateEmUrl,
-            dataType: 'json',
-            success: function(jsonObj) {
-                logContext("Operation completed");
-                progressEnd();
-                updateCompletionStatus(jsonObj, '#status-code-em-form');
-                updateLinkContent(jsonObj, '#status-code-em-form');
-		displayReportContent(jsonObj, '#status-update-container');
-                $('#status-code-em-button').show();
-                assignContext(jsonObj);
-                $("#subheader").html(getSubHeaderEm());
-                // add this dynamic update
-                updateStatusFormEm();
-            },
-            beforeSubmit: function(formdata, $form, options) {
-                formdata.push({
-                    "name": "sessionid",
-                    "value": sessionId
-                });
-                formdata.push({
-                    "name": "entryid",
-                    "value": entryId
-                });
-                formdata.push({
-                    "name": "idcode",
-                    "value": entryId
-                });
-                formdata.push({
-                    "name": "idcode1",
-                    "value": entryId
-                });
-                formdata.push({
-                    "name": "initialdepositdate",
-                    "value": initialDepositDate
-                });
-                formdata.push({
-                    "name": "holdcoordinatesdate",
-                    "value": holdCoordinatesDate
-                });
-                formdata.push({
-                    "name": "coordinatesdate",
-                    "value": coordinatesDate
-                });
-                formdata.push({
-                    "name": "authrelcode",
-                    "value": authRelCode
-                });
-
-                $('#status-code-em-form div.op-status').hide();
-                $('#status-code-em-form div.op-links').hide();
-                progressStart();
-                $('#status-code-em-button').hide();
-
-            }
-        });
-
-    }
     <!-- make the nav item for the current page active -->
 
     $('.nav a[href="' + pagePath + '"]').parent().addClass('active');
