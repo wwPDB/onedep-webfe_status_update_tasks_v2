@@ -1037,7 +1037,7 @@ function handleCLoseWindow() {
     $('form').on('submit', function() {
         inFormOrLink = true;
     });
-
+/*
     $(window).bind('beforeunload', function(eventObject) {
         var returnValue = undefined;
         if (!inFormOrLink) {
@@ -1046,6 +1046,7 @@ function handleCLoseWindow() {
         eventObject.returnValue = returnValue;
         return returnValue;
     });
+*/
 }
 
 // --------------------------------------------------------------------------------------------------------------
