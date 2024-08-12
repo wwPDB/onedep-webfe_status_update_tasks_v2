@@ -392,24 +392,24 @@ function updateStatusForm() {
         }
         $('#status-code').empty().append(optionList);
 
-        var emStatusCodeList = [ "AUTH", "HOLD", "HPUB", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+        var emStatusCodeList = [ "HPUB", "AUTH", "HOLD", "WAIT", "PROC", "POLC", "REFI", "AUCO", "REPL", "WDRN" ];
         if (em_depui_depositor_hold_instructions.length > 0) {
             if (em_depui_depositor_hold_instructions == "REL"){
-                emStatusCodeList = [ "AUTH", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                emStatusCodeList = [ "AUTH", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
                 if ((em_current_status.length > 0) && (em_current_status == "HPUB")) {
-                    emStatusCodeList = [ "AUTH", "HPUB", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                    emStatusCodeList = [ "HPUB", "AUTH", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
                 } else if ((em_current_status.length > 0) && (em_current_status == "HOLD")) {
-                    emStatusCodeList = [ "AUTH", "HOLD", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                    emStatusCodeList = [ "AUTH", "HOLD", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
                 }
             } else if (em_depui_depositor_hold_instructions == "HPUB") {
-                emStatusCodeList = [ "AUTH", "HPUB", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                emStatusCodeList = [ "HPUB", "AUTH", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
                 if ((em_current_status.length > 0) && (em_current_status == "HOLD")) {
-                    emStatusCodeList = [ "AUTH", "HOLD", "HPUB", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                    emStatusCodeList = [ "HPUB", "AUTH", "HOLD", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
                 }
             } else if (em_depui_depositor_hold_instructions == "HOLD") {
-                emStatusCodeList = [ "AUTH", "HOLD", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                emStatusCodeList = [ "AUTH", "HOLD", "WAIT", "PROC", "REFI", "AUCO", "REPL", "POLC", "WDRN" ];
                 if ((em_current_status.length > 0) && (em_current_status == "HPUB")) {
-                     emStatusCodeList = [ "AUTH", "HOLD", "HPUB", "POLC", "PROC", "REFI", "REPL", "WAIT", "WDRN" ];
+                     emStatusCodeList = [ "HPUB", "AUTH", "HOLD", "WAIT", "PROC", "REFI", "AUCO", "REPL",  "POLC", "WDRN" ];
                 }
             }
         }
