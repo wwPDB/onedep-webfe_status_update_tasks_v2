@@ -509,12 +509,7 @@ function updateStatusForm() {
         $('#annotator-initials').val(annotatorId);
     }
     if (holdCoordinatesDate.length > 0) {
-        $('#new-auth-status-hold-date').val(holdCoordinatesDate);
-	if (datetimeInit) {
-	    // Do not invoke update until init - otherwise minview is wrong
-	    $(".form_date").datetimepicker('update');
-	}
-
+	setHoldDate();
     }
 
     if (processSite.length > 0) {
@@ -534,12 +529,7 @@ function updateStatusForm() {
     }
 
     if (em_map_hold_date.length > 0) {
-        $('#em_map_hold_date').val(em_map_hold_date);
-	// With date filled in - pickup the default date
-	if (datetimeInit) {
-	    // Do not invoke update until init - otherwise minview is wrong
-	    $(".form_date_emdb").datetimepicker('update');
-	}
+	setEmHoldDate()
     }
 
 
@@ -1049,6 +1039,51 @@ function handleCLoseWindow() {
 */
 }
 
+function num2str(val, digits = 2) {
+    // Formats integer with leading zeros
+    return val.toLocaleString('en-US', {minimumIntegerDigits: digits, useGrouping:false});
+}
+
+function extendHoldDate(months) {
+    // Handles extending hold date deposit date + 1 yr + x months
+    logContext("Extending hold date by months " + months);
+    let  depDate = new Date(initialDepositDate);
+    logContext("Deposition date " + depDate);
+    let holdDate = new Date(depDate);
+    // One year + X months
+    holdDate.setMonth(holdDate.getMonth() + months + 12);
+    // Month is 0 based - the rest are not
+    let expDate = num2str(parseInt(holdDate.getFullYear()), 4) + "-" + 
+	num2str(parseInt(holdDate.getMonth()) + 1) + "-" + 
+	num2str(parseInt(holdDate.getDate()));
+    logContext("New hold date " + expDate);
+    if (ispdbentry() === true) {
+	holdCoordinatesDate = expDate;
+	setHoldDate();
+    }
+    if (isementry() === true) {
+	em_map_hold_date = expDate;
+	setEmHoldDate();
+    }
+}
+
+function setHoldDate() {
+    $('#new-auth-status-hold-date').val(holdCoordinatesDate);
+    if (datetimeInit) {
+	// Do not invoke update until init - otherwise minview is wrong
+	$(".form_date").datetimepicker('update');
+    }
+}
+
+function setEmHoldDate() {
+    $('#em_map_hold_date').val(em_map_hold_date);
+    // With date filled in - pickup the default date
+    if (datetimeInit) {
+	// Do not invoke update until init - otherwise minview is wrong
+	$(".form_date_emdb").datetimepicker('update');
+    }
+}
+
 // --------------------------------------------------------------------------------------------------------------
 //
 
@@ -1347,7 +1382,21 @@ $(document).ready(function() {
                 progressStart();
             }
         });
-    }
+
+	// Extend hold PDB
+	$('#menu-ext-hold li').click(function() {
+	    var val = parseInt($(this).attr("sel"));
+	    extendHoldDate(val);
+	});
+
+	// Extend hold EM
+	$('#menu-ext-hold-em li').click(function() {
+	    var val = parseInt($(this).attr("sel"));
+	    extendHoldDate(val);
+	});
+
+
+    } // status-other-dialog
 
 
     if ($("#status-misc-report-dialog").length > 0) {
