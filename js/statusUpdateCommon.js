@@ -1044,18 +1044,35 @@ function num2str(val, digits = 2) {
     return val.toLocaleString('en-US', {minimumIntegerDigits: digits, useGrouping:false});
 }
 
+function computeExtendedHoldDate(months) {
+    // Deposit date + 1 year + the selected extension. Same rule as Extend HOLD.
+    if (!initialDepositDate) {
+        return null;
+    }
+    var depDate = new Date(initialDepositDate);
+    if (isNaN(depDate.getTime())) {
+        return null;
+    }
+    var holdDate = new Date(depDate);
+    holdDate.setMonth(holdDate.getMonth() + months + 12);
+    var expDate = num2str(parseInt(holdDate.getFullYear()), 4) + "-" +
+        num2str(parseInt(holdDate.getMonth()) + 1) + "-" +
+        num2str(parseInt(holdDate.getDate()));
+    if (expDate.indexOf("NaN") !== -1) {
+        return null;
+    }
+    return expDate;
+}
+
 function extendHoldDate(months) {
     // Handles extending hold date deposit date + 1 yr + x months
     logContext("Extending hold date by months " + months);
-    let  depDate = new Date(initialDepositDate);
-    logContext("Deposition date " + depDate);
-    let holdDate = new Date(depDate);
-    // One year + X months
-    holdDate.setMonth(holdDate.getMonth() + months + 12);
-    // Month is 0 based - the rest are not
-    let expDate = num2str(parseInt(holdDate.getFullYear()), 4) + "-" + 
-	num2str(parseInt(holdDate.getMonth()) + 1) + "-" + 
-	num2str(parseInt(holdDate.getDate()));
+    var expDate = computeExtendedHoldDate(months);
+    logContext("Deposition date " + initialDepositDate);
+    if (!expDate) {
+        logContext("New hold date could not be calculated");
+        return null;
+    }
     logContext("New hold date " + expDate);
     if (ispdbentry() === true) {
 	holdCoordinatesDate = expDate;
@@ -1065,6 +1082,39 @@ function extendHoldDate(months) {
 	em_map_hold_date = expDate;
 	setEmHoldDate();
     }
+    return expDate;
+}
+
+function clearHoldExtensionNotify() {
+    $('#extend-notify-months').val('');
+    $('#extend-notify-date').val('');
+    $('#extend-notify-sender').val('');
+}
+
+function requestHoldExtensionAndNotify(months) {
+    var expDate = computeExtendedHoldDate(months);
+    if (!expDate) {
+        alert("The hold date could not be calculated because the deposition date is missing.");
+        return;
+    }
+    var letter = (months === 6) ? "Extension 6 months" : "Extension 3 months";
+    var which = [];
+    if (ispdbentry() === true) {
+        which.push("PDB author hold date");
+    }
+    if (isementry() === true) {
+        which.push("EMDB author hold date");
+    }
+    var fields = which.length ? which.join(" and ") : "hold date";
+    var prompt = "Set the " + fields + " to " + expDate + " and send the " + letter + " message?\n\nThis also saves the author-release choices currently shown in this section.";
+    if (!window.confirm(prompt)) {
+        return;
+    }
+    extendHoldDate(months);
+    $('#extend-notify-months').val(String(months));
+    $('#extend-notify-date').val(expDate);
+    $('#extend-notify-sender').val(annotatorId);
+    $('#status-other-form').submit();
 }
 
 function setHoldDate() {
@@ -1354,6 +1404,7 @@ $(document).ready(function() {
                 updateReportContent(jsonObj, '#status-report-container');
                 $('#status-report-container  div.report-content').show();
                 $('#status-other-button').show();
+                clearHoldExtensionNotify();
 		// Parse data coming back
                 assignContext(jsonObj);
                 $("#subheader").html(getSubHeader());
@@ -1393,6 +1444,15 @@ $(document).ready(function() {
 	$('#menu-ext-hold-em li').click(function() {
 	    var val = parseInt($(this).attr("sel"));
 	    extendHoldDate(val);
+	});
+
+	// Fill, save, and send the matching extension letter. A plain Go does not send.
+	$('#status-other-button').click(function() {
+	    clearHoldExtensionNotify();
+	});
+	$('#menu-ext-hold-notify li, #menu-ext-hold-notify-em li').click(function() {
+	    var val = parseInt($(this).attr("sel"));
+	    requestHoldExtensionAndNotify(val);
 	});
 
 
