@@ -18,6 +18,7 @@
  *   12-Feb-2018  ep  hide em form unless EMDB in requested accession codes
  *   23-May-2018  ep  Update selectors to use .val() instead of deprecated attributes
  *   11-Jun-2018  ep  Add displayReportContent that will display on error or hide content
+ *   21-Oct-2026  dh  Post expmethod with the hold-extension letter so the EMDB id is filled
  *
  */
 //
@@ -1424,6 +1425,11 @@ $(document).ready(function() {
                 formdata.push({
                     "name": "reqacctypes",
                     "value": reqacctypes
+                });
+                // Same value the Communication page uses to fill PDB and EMDB ids in the subject.
+                formdata.push({
+                    "name": "expmethod",
+                    "value": experimentalMethods
                 });
 
                 $('#status-other-form div.op-status').hide();
